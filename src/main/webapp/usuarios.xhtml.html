@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:f="http://java.sun.com/jsf/core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Gerenciar Usuários</title>
+</h:head>
+<h:body>
+    <h:form id="frmList">
+        <!-- Mensagens de feedback -->
+        <p:growl id="msgs" showDetail="true" />
+
+        <!-- Tabela de usuários -->
+        <p:dataTable value="#{usuarioController.usuarioList}" var="u"
+                     selection="#{usuarioController.selected}"
+                     selectionMode="single" rowKey="#{u.id}"
+                     paginator="true" rows="5" responsiveLayout="scroll">
+
+            <p:column headerText="ID">
+                <h:outputText value="#{u.id}" />
+            </p:column>
+
+            <p:column headerText="Nome">
+                <h:outputText value="#{u.nome}" />
+            </p:column>
+
+            <p:column headerText="E-mail">
+                <h:outputText value="#{u.email}" />
+            </p:column>
+
+            <p:column headerText="Telefone">
+                <h:outputText value="#{u.telefone}" />
+            </p:column>
+
+            <p:column headerText="Endereço">
+                <h:outputText value="#{u.endereco}" />
+            </p:column>
+        </p:dataTable>
+
+        <br/>
+
+        <!-- Botões de ação -->
+        <p:commandButton value="Novo Usuário" icon="pi pi-plus"
+                         onclick="PF('dlgCadastro').show(); return false;" />
+
+        <p:commandButton value="Editar" icon="pi pi-pencil"
+                         onclick="PF('dlgEdicao').show(); return false;"
+                         disabled="#{usuarioController.selected == null}" />
+
+        <p:commandButton value="Excluir" icon="pi pi-trash"
+                         action="#{usuarioController.deletarUsuario}"
+                         update="frmList msgs"
+                         disabled="#{usuarioController.selected == null}" />
+
+        <!-- Diálogo de Cadastro -->
+        <p:dialog header="Cadastro de Usuário" widgetVar="dlgCadastro" modal="true" resizable="false">
+            <h:form id="frmCadastro">
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel value="Nome:" for="nome" />
+                    <p:inputText id="nome" value="#{usuarioController.usuario.nome}" required="true" />
+
+                    <p:outputLabel value="Email:" for="email" />
+                    <p:inputText id="email" value="#{usuarioController.usuario.email}" required="true" />
+
+                    <p:outputLabel value="Senha:" for="senha" />
+                    <p:password id="senha" value="#{usuarioController.usuario.senha}" required="true" feedback="true" />
+
+                    <p:outputLabel value="Telefone:" for="telefone" />
+                    <p:inputText id="telefone" value="#{usuarioController.usuario.telefone}" />
+
+                    <p:outputLabel value="Nascimento:" for="nasc" />
+                    <p:calendar id="nasc" value="#{usuarioController.usuario.dataNascimento}" pattern="dd/MM/yyyy" />
+
+                    <p:outputLabel value="Endereço:" for="endereco" />
+                    <p:inputText id="endereco" value="#{usuarioController.usuario.endereco}" />
+                </p:panelGrid>
+
+                <p:commandButton value="Salvar" action="#{usuarioController.adicionarUsuario}" 
+                                 update=":frmList :msgs" 
+                                 oncomplete="PF('dlgCadastro').hide();" />
+            </h:form>
+        </p:dialog>
+
+        <!-- Diálogo de Edição -->
+        <p:dialog header="Editar Usuário" widgetVar="dlgEdicao" modal="true" resizable="false">
+            <h:form id="frmEdicao">
+                <p:panelGrid columns="2">
+
+                    <p:outputLabel value="Nome:" for="nomeEdit" />
+                    <p:inputText id="nomeEdit" value="#{usuarioController.selected.nome}" required="true" />
+
+                    <p:outputLabel value="Email:" for="emailEdit" />
+                    <p:inputText id="emailEdit" value="#{usuarioController.selected.email}" required="true" />
+
+                    <p:outputLabel value="Telefone:" for="telEdit" />
+                    <p:inputText id="telEdit" value="#{usuarioController.selected.telefone}" />
+
+                    <p:outputLabel value="Nascimento:" for="nascEdit" />
+                    <p:calendar id="nascEdit" value="#{usuarioController.selected.dataNascimento}" pattern="dd/MM/yyyy" />
+
+                    <p:outputLabel value="Endereço:" for="endEdit" />
+                    <p:inputText id="endEdit" value="#{usuarioController.selected.endereco}" />
+                </p:panelGrid>
+
+                <p:commandButton value="Salvar Alterações" action="#{usuarioController.editarUsuario}" 
+                                 update=":frmList :msgs" 
+                                 oncomplete="PF('dlgEdicao').hide();" />
+            </h:form>
+        </p:dialog>
+    </h:form>
+</h:body>
+</html>
