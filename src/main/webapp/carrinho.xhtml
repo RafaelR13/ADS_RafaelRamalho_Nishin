@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+<h:head>
+    <title>Carrinho de Compras</title>
+</h:head>
+
+<h:body>
+    <h:form id="frmCarrinho">
+        <p:growl id="msgs" showDetail="true" />
+
+        <h2>🛒 Carrinho de Compras</h2>
+
+        <p:dataTable value="#{carrinhoController.itens}" var="item" style="width:100%">
+            <p:column headerText="Produto">
+                <h:outputText value="#{item.produto.nome}" />
+            </p:column>
+            <p:column headerText="Preço Unitário">
+                <h:outputText value="#{item.produto.preco}">
+                    <f:convertNumber type="currency" currencySymbol="R$" />
+                </h:outputText>
+            </p:column>
+            <p:column headerText="Quantidade">
+                <h:outputText value="#{item.quantidade}" />
+            </p:column>
+            <p:column headerText="Subtotal">
+                <h:outputText value="#{item.subtotal}">
+                    <f:convertNumber type="currency" currencySymbol="R$" />
+                </h:outputText>
+            </p:column>
+            <p:column>
+                <p:commandButton value="Remover" icon="pi pi-times"
+                                 action="#{carrinhoController.removerItem(item)}"
+                                 update="frmCarrinho" />
+            </p:column>
+        </p:dataTable>
+
+        <h3>Total: 
+            <h:outputText value="#{carrinhoController.valorTotal}">
+                <f:convertNumber type="currency" currencySymbol="R$" />
+            </h:outputText>
+        </h3>
+
+        <p:commandButton value="Finalizar Compra" 
+                         action="#{carrinhoController.finalizarCompra}" 
+                         update="frmCarrinho msgs"
+                         icon="pi pi-check"
+                         styleClass="p-button-success" />
+
+        <p:commandButton value="Limpar Carrinho"
+                         action="#{carrinhoController.limparCarrinho}"
+                         update="frmCarrinho"
+                         icon="pi pi-trash"
+                         styleClass="p-button-danger" />
+    </h:form>
+</h:body>
+</html>
+
