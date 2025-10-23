@@ -8,7 +8,6 @@ package com.upf.nishin.controller;
  *
  * @author User
  */
-
 import com.upf.nishin.entity.*;
 import com.upf.nishin.facade.*;
 import jakarta.enterprise.context.SessionScoped;
@@ -42,7 +41,7 @@ public class CarrinhoController implements Serializable {
 
     public void adicionarProduto(ProdutoEntity produto) {
         ItemCarrinhoEntity itemExistente = itens.stream()
-                .filter(i -> i.getProduto().getId().equals(produto.getId()))
+                .filter(i -> i.getProduto().getIdProduto().equals(produto.getIdProduto()))
                 .findFirst()
                 .orElse(null);
 
@@ -76,5 +75,8 @@ public class CarrinhoController implements Serializable {
         carrinhoFacade.create(carrinho);
         limparCarrinho();
     }
-}
 
+    public int getTotalItens() {
+        return itens != null ? itens.stream().mapToInt(ItemCarrinhoEntity::getQuantidade).sum() : 0;
+    }
+}

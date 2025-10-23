@@ -1,0 +1,48 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Nishin Store</title>
+    <h:outputStylesheet library="css" name="base.css"/>
+    <h:outputStylesheet library="css" name="index.css"/>
+</h:head>
+
+<h:body>
+    <header>
+        <div class="logo">
+            <h:graphicImage library="images" name="nishin-logo.png" alt="Logo"/>
+        </div>
+        <h2>Nishin Store</h2>
+        <div class="actions">
+            <p:commandButton value="Login / Cadastro" action="login.xhtml?faces-redirect=true" icon="pi pi-user"/>
+            <p:commandButton value="Carrinho" icon="pi pi-shopping-cart"/>
+        </div>
+    </header>
+
+    <div class="main-container">
+        <h3>Produtos em Destaque</h3>
+        <h:form id="frmProdutos">
+            <p:dataGrid value="#{produtoController.produtoList}" var="p" columns="3"
+                        paginator="true" rows="6" layout="grid"
+                        paginatorPosition="bottom"
+                        emptyMessage="Nenhum produto disponível no momento.">
+
+                <p:panel header="#{p.nome}">
+                    <p:graphicImage value="#{p.imagem}" style="width:150px; height:150px; object-fit:cover;"/>
+                    <h:outputText value="#{p.descricao}" styleClass="block mt-2"/>
+                    <h:outputText value="R$ #{p.preco}" styleClass="block font-bold mt-2"/>
+                    <p:commandButton value="Adicionar ao Carrinho"
+                                     icon="pi pi-cart-plus"
+                                     actionListener="#{carrinhoController.adicionarProduto(p)}"
+                                     update="frmProdutos"
+                                     styleClass="mt-3 w-full"/>
+                </p:panel>
+            </p:dataGrid>
+
+            <p:growl id="growl" showDetail="true"/>
+        </h:form>
+    </div>
+</h:body>
+</html>

@@ -9,34 +9,23 @@ package com.upf.nishin.facade;
  * @author User
  */
 
-import com.upf.nishin.entity.UsuarioEntity;
+import com.upf.nishin.entity.PedidoEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 
 @Stateless
-public class UsuarioFacade extends AbstractFacade<UsuarioEntity> {
+public class PedidoFacade extends AbstractFacade<PedidoEntity> {
 
     @PersistenceContext(unitName = "NishinPU")
     private EntityManager em;
-
-    public UsuarioFacade() {
-        super(UsuarioEntity.class);
-    }
 
     @Override
     public EntityManager getEntityManager() {
         return em;
     }
 
-    public UsuarioEntity findByEmail(String email) {
-        try {
-            return em.createQuery("SELECT u FROM UsuarioEntity u WHERE u.email = :email", UsuarioEntity.class)
-                     .setParameter("email", email)
-                     .getSingleResult();
-        } catch (Exception e) {
-            return null;
-        }
+    public PedidoFacade() {
+        super(PedidoEntity.class);
     }
 }
-

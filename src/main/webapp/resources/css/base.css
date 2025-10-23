@@ -1,0 +1,32 @@
+/* ===== base.css ===== */
+body {
+    font-family: 'Segoe UI', sans-serif;
+    margin: 0;
+    padding: 0;
+    background-color: #0a0000;
+    color: #fff;
+}
+
+h1, h2, h3 {
+    color: #ff2020;
+    text-align: center;
+}
+
+button, .ui-button {
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+button:hover, .ui-button:hover {
+    opacity: 0.9;
+}
+
+a {
+    color: #ff4040;
+    text-decoration: none;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+

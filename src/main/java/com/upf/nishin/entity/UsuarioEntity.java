@@ -11,7 +11,8 @@ package com.upf.nishin.entity;
 
 import jakarta.persistence.*;
 import java.io.Serializable;
-import java.util.Date;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
 import java.util.Objects;
 
 @Entity
@@ -20,34 +21,39 @@ public class UsuarioEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id_usuario") 
+    private Integer idUsuario;
 
-    @Column(nullable = false)
+    @Column(name = "nome", nullable = false, length = 150)
     private String nome;
 
-    @Column(nullable = false, unique = true)
+    @Column(name = "email", nullable = false, length = 120, unique = true)
     private String email;
 
-    @Column(nullable = false)
+    @Column(name = "senha", nullable = false, length = 255)
     private String senha;
 
+    @Column(name = "telefone", length = 20)
     private String telefone;
 
-    @Temporal(TemporalType.DATE)
-    private Date dataNascimento;
+    @Column(name = "data_nascimento")
+    private LocalDate dataNascimento;
 
-    private String endereco;
+    @Column(name = "data_cadastro")
+    private LocalDateTime dataCadastro;
 
-    public Integer getId() {
-        return id;
+    public Integer getIdUsuario() {
+        return idUsuario;
     }
-    public void setId(Integer id) {
-        this.id = id;
+
+    public void setIdUsuario(Integer idUsuario) {
+        this.idUsuario = idUsuario;
     }
 
     public String getNome() {
         return nome;
     }
+
     public void setNome(String nome) {
         this.nome = nome;
     }
@@ -55,6 +61,7 @@ public class UsuarioEntity implements Serializable {
     public String getEmail() {
         return email;
     }
+
     public void setEmail(String email) {
         this.email = email;
     }
@@ -62,6 +69,7 @@ public class UsuarioEntity implements Serializable {
     public String getSenha() {
         return senha;
     }
+
     public void setSenha(String senha) {
         this.senha = senha;
     }
@@ -69,28 +77,31 @@ public class UsuarioEntity implements Serializable {
     public String getTelefone() {
         return telefone;
     }
+
     public void setTelefone(String telefone) {
         this.telefone = telefone;
     }
 
-    public Date getDataNascimento() {
+    public LocalDate getDataNascimento() {
         return dataNascimento;
     }
-    public void setDataNascimento(Date dataNascimento) {
+
+    public void setDataNascimento(LocalDate dataNascimento) {
         this.dataNascimento = dataNascimento;
     }
 
-    public String getEndereco() {
-        return endereco;
+    public LocalDateTime getDataCadastro() {
+        return dataCadastro;
     }
-    public void setEndereco(String endereco) {
-        this.endereco = endereco;
+
+    public void setDataCadastro(LocalDateTime dataCadastro) {
+        this.dataCadastro = dataCadastro;
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 83 * hash + Objects.hashCode(this.id);
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.idUsuario);
         return hash;
     }
 
@@ -106,7 +117,6 @@ public class UsuarioEntity implements Serializable {
             return false;
         }
         final UsuarioEntity other = (UsuarioEntity) obj;
-        return Objects.equals(this.id, other.id);
+        return Objects.equals(this.idUsuario, other.idUsuario);
     }
 }
-

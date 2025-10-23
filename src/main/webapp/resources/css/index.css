@@ -1,0 +1,122 @@
+/* ===== index.css ===== */
+
+/* Fundo geral: preto quase puro com toque avermelhado suave */
+body {
+    background: radial-gradient(circle at bottom, #080000 0%, #000000 100%);
+    color: #fff;
+    margin: 0;
+    padding: 0;
+    font-family: 'Segoe UI', sans-serif;
+}
+
+/* Header (mantém o topo como está) */
+header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #1a1a1a;
+    padding: 8px 20px;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
+    border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+}
+
+header .logo img {
+    height: 50px;
+    width: auto;
+}
+
+header h2 {
+    color: #ff2020;
+    text-shadow: 0 0 8px #ff2020;
+    margin: 0;
+}
+
+.actions {
+    display: flex;
+    gap: 10px;
+}
+
+/* Remove fundo branco geral da área de produtos */
+.main-container {
+    padding: 2rem;
+    text-align: center;
+    background-color: transparent !important;
+}
+
+/* Remove fundo branco do DataGrid e das células */
+.ui-datagrid, 
+.ui-datagrid-content, 
+.ui-datagrid-row, 
+.ui-widget-content, 
+.ui-dataview {
+    background-color: transparent !important;
+    border: none !important;
+    box-shadow: none !important;
+}
+
+/* Painéis dos produtos */
+.ui-panel {
+    background-color: #0b0000 !important;
+    border: 1px solid rgba(255, 32, 32, 0.25) !important;
+    border-radius: 10px !important;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
+    margin-bottom: 2rem;
+}
+
+/* Título do painel (nome do produto) */
+.ui-panel .ui-panel-titlebar {
+    background-color: #0b0000 !important;
+    color: #ff2020 !important;
+    font-weight: bold;
+    text-align: center;
+    border-bottom: 1px solid rgba(255, 32, 32, 0.2) !important;
+}
+
+/* Conteúdo interno do painel */
+.ui-panel .ui-panel-content {
+    background-color: #0b0000 !important;
+    color: #ddd !important;
+    padding: 1rem;
+}
+
+/* Botões padrão PrimeFaces (azul padrão preservado) */
+.ui-commandbutton, .ui-button {
+    background-color: #007ad9 !important;
+    border: none !important;
+    color: #fff !important;
+    border-radius: 6px !important;
+    transition: 0.3s;
+}
+
+.ui-commandbutton:hover, .ui-button:hover {
+    background-color: #005b9f !important;
+    box-shadow: 0 0 8px rgba(0, 122, 217, 0.4);
+}
+
+/* Paginação */
+/* garante que a paginação superior não apareça */
+.ui-paginator .ui-paginator-top {
+    display: none !important;
+}
+
+.ui-paginator {
+    background-color: transparent !important;
+    border: none !important;
+    text-align: center;
+    margin-top: 1rem;
+}
+
+.ui-paginator .ui-paginator-page {
+    background-color: #0d0000 !important;
+    color: #fff !important;
+    border: 1px solid rgba(255, 32, 32, 0.25) !important;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin: 0 2px;
+}
+
+.ui-paginator .ui-state-active {
+    background-color: #ff2020 !important;
+    color: #fff !important;
+    box-shadow: 0 0 10px rgba(255, 32, 32, 0.4);
+}

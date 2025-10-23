@@ -18,7 +18,8 @@ public class ProdutoEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Integer id;
+    @Column(name = "id_produto")
+    private Integer idProduto;
 
     @Column(nullable = false)
     private String nome;
@@ -29,19 +30,20 @@ public class ProdutoEntity implements Serializable {
     @Column(nullable = false)
     private Double preco;
 
+    @Column(name = "quantidade_estoque")
     private Integer estoque;
 
-    private String categoria;
-
+    @Column(name = "imagem_url")
     private String imagem; // Caminho ou URL da imagem
 
-    public Integer getId() {
-        return id;
-    }
-    public void setId(Integer id) {
-        this.id = id;
+     public Integer getIdProduto() {
+        return idProduto;
     }
 
+    public void setIdProduto(Integer idProduto) {
+        this.idProduto = idProduto;
+    }
+   
     public String getNome() {
         return nome;
     }
@@ -68,13 +70,6 @@ public class ProdutoEntity implements Serializable {
     }
     public void setEstoque(Integer estoque) {
         this.estoque = estoque;
-    }
-
-    public String getCategoria() {
-        return categoria;
-    }
-    public void setCategoria(String categoria) {
-        this.categoria = categoria;
     }
 
     public String getImagem() {
