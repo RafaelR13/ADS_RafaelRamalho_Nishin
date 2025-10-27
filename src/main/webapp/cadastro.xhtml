@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://java.sun.com/jsf/core">
+
+    <h:head>
+        <title>Cadastro - Nishin Store</title>
+        <h:outputStylesheet library="css" name="base.css"/>
+        <h:outputStylesheet library="css" name="login.css"/>
+        <f:view locale="pt_BR"/>
+    </h:head>
+
+    <h:body>
+        <div class="login-container">
+            <h:form id="frmCadastro">
+                <h:outputLink value="index.xhtml" styleClass="logo-link">
+                    <p:graphicImage library="images" name="nishin-logo.png" alt="Logo" styleClass="logo-img"/>
+                </h:outputLink>
+                <h2>Crie sua conta</h2>
+
+                <div class="input-field">
+                    <p:inputText id="nome"
+                                 value="#{usuarioController.usuario.nome}"
+                                 placeholder="Nome completo"
+                                 required="true"
+                                 requiredMessage="Informe seu nome completo"/>
+                </div>
+
+                <div class="input-field">
+                    <p:inputText id="email"
+                                 value="#{usuarioController.usuario.email}"
+                                 placeholder="E-mail"
+                                 required="true"
+                                 requiredMessage="Informe um e-mail válido"/>
+                </div>
+
+                <div class="input-field">
+                    <p:password id="senha"
+                                value="#{usuarioController.usuario.senha}"
+                                placeholder="Senha"
+                                feedback="true"
+                                required="true"
+                                requiredMessage="Informe uma senha"/>
+                </div>
+
+                <div class="input-field">
+                    <p:inputMask id="telefone"
+                                 mask="(99) 99999-9999"
+                                 value="#{usuarioController.usuario.telefone}"
+                                 placeholder="Telefone"
+                                 required="true"
+                                 requiredMessage="Informe um telefone válido"/>
+                </div>
+
+                <div class="input-field">
+                    <p:datePicker id="dataNascimento"
+                                  value="#{usuarioController.usuario.dataNascimento}"
+                                  pattern="dd/MM/yyyy"
+                                  locale="pt_BR"
+                                  showIcon="true"
+                                  monthNavigator="true"
+                                  yearNavigator="true"
+                                  yearRange="1900:2025"
+                                  required="true"
+                                  placeholder="Data de Nascimento"
+                                  requiredMessage="Informe sua data de nascimento"/>
+                </div>
+
+                <p:commandButton value="Cadastrar"
+                                 icon="pi pi-user-plus"
+                                 action="#{usuarioController.cadastrarUsuario}"
+                                 ajax="true"
+                                 update="@form growl"
+                                 styleClass="login-button"/>
+
+                <h:outputLink value="login.xhtml" styleClass="register-link">
+                    Já tem uma conta? Faça login
+                </h:outputLink>
+
+                <!-- growl global (mostra erros e sucessos) -->
+                <p:growl id="growl" life="4000" showDetail="true"/>
+            </h:form>
+        </div>
+    </h:body>
+</html>

@@ -13,6 +13,7 @@ import com.upf.nishin.entity.UsuarioEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import jakarta.persistence.Query;
 
 @Stateless
 public class UsuarioFacade extends AbstractFacade<UsuarioEntity> {
@@ -29,14 +30,29 @@ public class UsuarioFacade extends AbstractFacade<UsuarioEntity> {
         return em;
     }
 
-    public UsuarioEntity findByEmail(String email) {
+    /**
+     * Buscar um usuario por email
+     * @param email
+     * @param senha
+     * @return 
+     */
+    public UsuarioEntity buscarPorEmail(String email, String senha) {
+        UsuarioEntity usuario = new UsuarioEntity();
         try {
-            return em.createQuery("SELECT u FROM UsuarioEntity u WHERE u.email = :email", UsuarioEntity.class)
-                     .setParameter("email", email)
-                     .getSingleResult();
+            //utilizando JPQL para construir a query 
+            Query query = getEntityManager()
+                    .createQuery("SELECT u FROM UsuarioEntity u WHERE u.email = :email AND u.senha = :senha");
+            query.setParameter("email", email);
+            query.setParameter("senha", senha);
+
+            //verifica se existe algum resultado para não gerar excessão
+            if (!query.getResultList().isEmpty()) {
+                usuario = (UsuarioEntity) query.getSingleResult();
+            }
         } catch (Exception e) {
-            return null;
+            System.out.println("Erro: " + e);
         }
+        return usuario;
     }
 }
 

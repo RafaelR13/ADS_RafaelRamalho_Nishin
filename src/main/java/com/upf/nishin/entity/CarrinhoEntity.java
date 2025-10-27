@@ -8,7 +8,6 @@ package com.upf.nishin.entity;
  *
  * @author User
  */
-
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -20,20 +19,21 @@ public class CarrinhoEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column(name = "id_carrinho")
     private Integer idCarrinho;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private UsuarioEntity usuario;
 
     @Temporal(TemporalType.TIMESTAMP)
+    @Column(name = "data_atualizacao")
     private Date dataAtualizacao = new Date();
 
     @OneToMany(mappedBy = "carrinho", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemCarrinhoEntity> itens;
 
     // ========= GETTERS E SETTERS =========
-
     public Integer getIdCarrinho() {
         return idCarrinho;
     }
@@ -67,9 +67,10 @@ public class CarrinhoEntity implements Serializable {
     }
 
     // ========= MÉTODOS DE APOIO =========
-
     public Double getValorTotal() {
-        if (itens == null) return 0.0;
+        if (itens == null) {
+            return 0.0;
+        }
         return itens.stream()
                 .mapToDouble(i -> i.getProduto().getPreco() * i.getQuantidade())
                 .sum();

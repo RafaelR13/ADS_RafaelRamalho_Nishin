@@ -10,6 +10,7 @@ body {
     font-family: 'Segoe UI', sans-serif;
 }
 
+/* === Container principal === */
 .login-container {
     background-color: #1a1a1a;
     padding: 2.5rem;
@@ -17,7 +18,7 @@ body {
     box-shadow: 0 0 30px #ff2020;
     text-align: center;
     width: 90%;
-    max-width: 500px; /* Agora é responsivo */
+    max-width: 500px;
     min-width: 350px;
     box-sizing: border-box;
 }
@@ -27,37 +28,41 @@ body {
     margin-bottom: 1rem;
 }
 
-/* Garante que o texto do título não quebre ou corte */
+/* === Título === */
 .login-container h2 {
     margin-bottom: 1.5rem;
-    color: #ff2020;
-    white-space: normal; /* Permite quebra se for necessário */
-    word-break: keep-all; /* Mantém o "Nishin Store" junto */
-    overflow: visible !important;
-    text-overflow: unset !important;
+    color: #fff !important;
     font-size: 1.3rem;
 }
 
+/* === Campos === */
 .input-field {
     margin-bottom: 1rem;
 }
 
 .ui-inputtext,
-.ui-password {
+.ui-password,
+.ui-inputmask,
+.ui-calendar input {
     width: 100%;
     border-radius: 6px;
     padding: 0.6rem;
     background-color: #1a0f0f !important;
     border: 1px solid #ff4040 !important;
     color: #fff !important;
+    font-size: 1rem;
+    box-sizing: border-box;
 }
 
 .ui-inputtext:focus,
-.ui-password:focus {
+.ui-password:focus,
+.ui-inputmask:focus,
+.ui-calendar input:focus {
     border-color: #ff2020 !important;
     box-shadow: 0 0 8px #ff2020 !important;
 }
 
+/* === Botão === */
 .login-button {
     width: 100%;
     background: linear-gradient(90deg, #ff2020, #ff4040);
@@ -68,6 +73,7 @@ body {
     cursor: pointer;
     font-weight: 600;
     transition: 0.3s;
+    box-sizing: border-box;
 }
 
 .login-button:hover {
@@ -75,6 +81,14 @@ body {
     box-shadow: 0 0 10px #ff4040;
 }
 
+/* Evita o botão crescer ao validar */
+.login-button:focus,
+.login-button:active {
+    outline: none;
+    transform: none;
+}
+
+/* === Link === */
 .register-link {
     display: block;
     margin-top: 1rem;
@@ -82,7 +96,57 @@ body {
     font-size: 0.9rem;
 }
 
-/* Tornar o login centralizado e bonito no celular */
+/* === Calendário === */
+.ui-datepicker {
+    z-index: 9999 !important;
+    background-color: #1a1a1a !important;
+    border: 1px solid #ff4040 !important;
+    border-radius: 8px !important;
+    color: #fff !important;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.3);
+}
+
+.ui-datepicker-calendar td a {
+    color: #fff !important;
+}
+
+.ui-datepicker-calendar td a:hover {
+    background-color: #ff4040 !important;
+    color: #fff !important;
+}
+
+/* === Ícone do calendário === */
+.ui-datepicker-trigger {
+    height: 42px !important;
+    width: 42px !important;
+    border-radius: 6px !important;
+    margin-left: 6px !important;
+    background-color: #ff2020 !important;
+    border: none !important;
+    color: #fff !important;
+    cursor: pointer !important;
+    transition: 0.3s !important;
+}
+
+.ui-datepicker-trigger:hover {
+    background-color: #cc1818 !important;
+    box-shadow: 0 0 8px #ff4040 !important;
+}
+
+.input-field .ui-calendar {
+    display: flex !important;
+    align-items: center !important;
+}
+
+/* === Growl === */
+.ui-growl {
+    position: fixed !important;
+    top: 1rem;
+    right: 1rem;
+    z-index: 9999 !important;
+}
+
+/* === Responsivo === */
 @media (max-width: 480px) {
     .login-container {
         padding: 2rem 1.5rem;
@@ -91,5 +155,10 @@ body {
 
     .login-container h2 {
         font-size: 1.1rem;
+    }
+
+    .ui-datepicker-trigger {
+        height: 38px !important;
+        width: 38px !important;
     }
 }

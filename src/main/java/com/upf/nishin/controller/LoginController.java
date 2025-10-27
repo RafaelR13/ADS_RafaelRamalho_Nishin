@@ -11,85 +11,106 @@ package com.upf.nishin.controller;
 
 import com.upf.nishin.entity.UsuarioEntity;
 import com.upf.nishin.facade.UsuarioFacade;
+import jakarta.annotation.PostConstruct;
+import jakarta.ejb.EJB;
 import jakarta.enterprise.context.SessionScoped;
-import jakarta.inject.Inject;
-import jakarta.inject.Named;
-import java.io.Serializable;
-import java.io.IOException;
-import java.util.List;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+import jakarta.inject.Named;
+import jakarta.servlet.http.HttpSession;
+import java.io.Serializable;
 
 @Named("loginController")
 @SessionScoped
 public class LoginController implements Serializable {
 
-    private String email;
-    private String senha;
-    private UsuarioEntity usuarioLogado;
-
-    @Inject
+    @EJB
     private UsuarioFacade usuarioFacade;
 
-    public String login() {
-        try {
-            List<UsuarioEntity> usuarios = usuarioFacade.getEntityManager()
-                    .createQuery("SELECT u FROM UsuarioEntity u WHERE u.email = :email AND u.senha = :senha", UsuarioEntity.class)
-                    .setParameter("email", email.trim())
-                    .setParameter("senha", senha.trim())
-                    .getResultList();
+    private UsuarioEntity usuario;
 
-            if (usuarios.isEmpty()) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro", "E-mail ou senha incorretos."));
+    public LoginController() {
+    }
+
+    @PostConstruct
+    public void init() {
+        usuario = new UsuarioEntity();
+    }
+
+    /**
+     * Valida login e senha e mantém o usuário na sessão.
+     */
+    public String validarLogin() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+
+        try {
+            UsuarioEntity usuarioDB = usuarioFacade.buscarPorEmail(usuario.getEmail(), usuario.getSenha());
+
+            if (usuarioDB != null && usuarioDB.getIdUsuario() != null) {
+                session.setAttribute("usuarioLogado", usuarioDB);
+                this.usuario = usuarioDB;
+
+                FacesMessage fm = new FacesMessage(
+                        FacesMessage.SEVERITY_INFO,
+                        "Sucesso!",
+                        "Login realizado com sucesso!");
+                FacesContext.getCurrentInstance().addMessage(null, fm);
+
+                return "/index.xhtml?faces-redirect=true";
+            } else {
+                FacesMessage fm = new FacesMessage(
+                        FacesMessage.SEVERITY_ERROR,
+                        "Falha no Login!",
+                        "E-mail ou senha incorretos!");
+                FacesContext.getCurrentInstance().addMessage(null, fm);
                 return null;
             }
 
-            usuarioLogado = usuarios.get(0);
-            FacesContext.getCurrentInstance().getExternalContext().getSessionMap().put("usuarioLogado", usuarioLogado);
-
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO, "Sucesso", "Login realizado com sucesso!"));
-
-            return "/index.xhtml?faces-redirect=true";
-
         } catch (Exception e) {
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR, "Erro no login", e.getMessage()));
+            FacesMessage fm = new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Erro no Login!",
+                    e.getMessage());
+            FacesContext.getCurrentInstance().addMessage(null, fm);
             return null;
         }
     }
 
-    public void logout() throws IOException {
-        FacesContext.getCurrentInstance().getExternalContext().invalidateSession();
-        FacesContext.getCurrentInstance().getExternalContext().redirect("login.xhtml");
-    }
-
-    public boolean isLogado() {
-        return usuarioLogado != null;
-    }
-
-    public String getEmail() {
-        return email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-    }
-
-    public String getSenha() {
-        return senha;
-    }
-
-    public void setSenha(String senha) {
-        this.senha = senha;
-    }
-
+    /**
+     * Retorna o usuário logado da sessão.
+     */
     public UsuarioEntity getUsuarioLogado() {
-        return usuarioLogado;
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        return (UsuarioEntity) session.getAttribute("usuarioLogado");
     }
 
-    public void setUsuarioLogado(UsuarioEntity usuarioLogado) {
-        this.usuarioLogado = usuarioLogado;
+    /**
+     * Verifica se há usuário logado.
+     */
+    public boolean isLogado() {
+        return getUsuarioLogado() != null;
+    }
+
+    /**
+     * Faz logout e invalida a sessão.
+     */
+    public String logout() {
+        FacesContext context = FacesContext.getCurrentInstance();
+        HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
+        if (session != null) {
+            session.invalidate();
+        }
+        return "/login.xhtml?faces-redirect=true";
+    }
+
+    // Getters e Setters
+    public UsuarioEntity getUsuario() {
+        return usuario;
+    }
+
+    public void setUsuario(UsuarioEntity usuario) {
+        this.usuario = usuario;
     }
 }

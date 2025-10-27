@@ -10,57 +10,173 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
       xmlns:f="http://java.sun.com/jsf/core">
 
 <h:head>
-    <title>Carrinho de Compras</title>
+    <title>Carrinho - Nishin Store</title>
+    <h:outputStylesheet library="css" name="base.css"/>
+    <h:outputStylesheet library="css" name="login.css"/> <!-- aproveita o estilo escuro -->
+    <style>
+        .cart-container {
+            max-width: 800px;
+            margin: 2rem auto;
+            background-color: #1a1a1a;
+            border-radius: 12px;
+            box-shadow: 0 0 25px #ff2020;
+            padding: 2rem;
+            color: #fff;
+        }
+
+        .cart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1.5rem;
+        }
+
+        .cart-header h2 {
+            color: #fff;
+            font-size: 1.4rem;
+        }
+
+        .cart-table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .cart-table th,
+        .cart-table td {
+            padding: 12px;
+            border-bottom: 1px solid #ff4040;
+            text-align: center;
+        }
+
+        .cart-table th {
+            color: #ff4040;
+        }
+
+        .cart-table td img {
+            width: 60px;
+            height: 60px;
+            object-fit: cover;
+            border-radius: 6px;
+        }
+
+        .cart-total {
+            text-align: right;
+            margin-top: 1.5rem;
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #ff4040;
+        }
+
+        .cart-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 1.5rem;
+        }
+
+        .btn-finalizar {
+            background: linear-gradient(90deg, #ff2020, #ff4040);
+            border: none;
+            color: white;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: 0.3s;
+        }
+
+        .btn-finalizar:hover {
+            background: linear-gradient(90deg, #cc1818, #ff3030);
+            box-shadow: 0 0 10px #ff4040;
+        }
+
+        .btn-voltar {
+            background: none;
+            color: #ff4040;
+            border: 1px solid #ff4040;
+            padding: 0.8rem 1.5rem;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+
+        .btn-voltar:hover {
+            background: #ff4040;
+            color: #fff;
+        }
+
+        .empty-cart {
+            text-align: center;
+            color: #aaa;
+            font-size: 1rem;
+            margin-top: 2rem;
+        }
+    </style>
 </h:head>
 
 <h:body>
-    <h:form id="frmCarrinho">
-        <p:growl id="msgs" showDetail="true" />
+    <f:event type="preRenderView" listener="#{carrinhoController.irParaCarrinho}" />
+    <div class="cart-container">
+        <div class="cart-header">
+            <h2>🛒 Seu Carrinho</h2>
+            <h:outputLink value="index.xhtml" styleClass="btn-voltar">Voltar à Loja</h:outputLink>
+        </div>
 
-        <h2>🛒 Carrinho de Compras</h2>
+        <h:form id="frmCarrinho">
+            <p:dataTable value="#{carrinhoController.itens}" var="item"
+                         rendered="#{not empty carrinhoController.itens}"
+                         styleClass="cart-table"
+                         paginator="false">
 
-        <p:dataTable value="#{carrinhoController.itens}" var="item" style="width:100%">
-            <p:column headerText="Produto">
-                <h:outputText value="#{item.produto.nome}" />
-            </p:column>
-            <p:column headerText="Preço Unitário">
-                <h:outputText value="#{item.produto.preco}">
-                    <f:convertNumber type="currency" currencySymbol="R$" />
-                </h:outputText>
-            </p:column>
-            <p:column headerText="Quantidade">
-                <h:outputText value="#{item.quantidade}" />
-            </p:column>
-            <p:column headerText="Subtotal">
-                <h:outputText value="#{item.subtotal}">
-                    <f:convertNumber type="currency" currencySymbol="R$" />
-                </h:outputText>
-            </p:column>
-            <p:column>
-                <p:commandButton value="Remover" icon="pi pi-times"
-                                 action="#{carrinhoController.removerItem(item)}"
-                                 update="frmCarrinho" />
-            </p:column>
-        </p:dataTable>
+                <p:column headerText="Produto">
+                    <h:outputText value="#{item.produto.nome}" />
+                </p:column>
 
-        <h3>Total: 
-            <h:outputText value="#{carrinhoController.valorTotal}">
-                <f:convertNumber type="currency" currencySymbol="R$" />
-            </h:outputText>
-        </h3>
+                <p:column headerText="Imagem">
+                    <p:graphicImage value="#{item.produto.imagem}" />
+                </p:column>
 
-        <p:commandButton value="Finalizar Compra" 
-                         action="#{carrinhoController.finalizarCompra}" 
-                         update="frmCarrinho msgs"
-                         icon="pi pi-check"
-                         styleClass="p-button-success" />
+                <p:column headerText="Preço Unitário">
+                    <h:outputText value="R$ #{item.produto.preco}" />
+                </p:column>
 
-        <p:commandButton value="Limpar Carrinho"
-                         action="#{carrinhoController.limparCarrinho}"
-                         update="frmCarrinho"
-                         icon="pi pi-trash"
-                         styleClass="p-button-danger" />
-    </h:form>
+                <p:column headerText="Quantidade">
+                    <h:outputText value="#{item.quantidade}" />
+                </p:column>
+
+                <p:column headerText="Subtotal">
+                    <h:outputText value="R$ #{item.produto.preco * item.quantidade}" />
+                </p:column>
+
+                <p:column headerText="Ações">
+                    <p:commandButton value="Remover"
+                                     icon="pi pi-trash"
+                                     actionListener="#{carrinhoController.removerItem(item)}"
+                                     update="frmCarrinho"
+                                     styleClass="ui-button-danger"/>
+                </p:column>
+            </p:dataTable>
+
+            <h:panelGroup rendered="#{empty carrinhoController.itens}" styleClass="empty-cart">
+                <h:outputText value="Seu carrinho está vazio 😢"/>
+            </h:panelGroup>
+
+            <h:panelGroup rendered="#{not empty carrinhoController.itens}">
+                <div class="cart-total">
+                    Total: R$ #{carrinhoController.valorTotal}
+                </div>
+
+                <div class="cart-actions">
+                    <p:commandButton value="Finalizar Compra"
+                                     icon="pi pi-check"
+                                     actionListener="#{carrinhoController.finalizarCompra}"
+                                     update="frmCarrinho growl"
+                                     styleClass="btn-finalizar"/>
+                </div>
+            </h:panelGroup>
+
+            <p:growl id="growl" showDetail="true" life="4000"/>
+        </h:form>
+    </div>
 </h:body>
 </html>
-

@@ -20,11 +20,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
         <!-- Tabela de usuários -->
         <p:dataTable value="#{usuarioController.usuarioList}" var="u"
                      selection="#{usuarioController.selected}"
-                     selectionMode="single" rowKey="#{u.id}"
-                     paginator="true" rows="5" responsiveLayout="scroll">
+                     selectionMode="single" rowKey="#{u.idUsuario}"
+                     paginator="true" rows="5"> 
 
             <p:column headerText="ID">
-                <h:outputText value="#{u.id}" />
+                <h:outputText value="#{u.idUsuario}" />
             </p:column>
 
             <p:column headerText="Nome">
@@ -39,9 +39,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                 <h:outputText value="#{u.telefone}" />
             </p:column>
 
-            <p:column headerText="Endereço">
-                <h:outputText value="#{u.endereco}" />
-            </p:column>
         </p:dataTable>
 
         <br/>
@@ -79,8 +76,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <p:outputLabel value="Nascimento:" for="nasc" />
                     <p:calendar id="nasc" value="#{usuarioController.usuario.dataNascimento}" pattern="dd/MM/yyyy" />
 
-                    <p:outputLabel value="Endereço:" for="endereco" />
-                    <p:inputText id="endereco" value="#{usuarioController.usuario.endereco}" />
                 </p:panelGrid>
 
                 <p:commandButton value="Salvar" action="#{usuarioController.adicionarUsuario}" 
@@ -106,8 +101,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                     <p:outputLabel value="Nascimento:" for="nascEdit" />
                     <p:calendar id="nascEdit" value="#{usuarioController.selected.dataNascimento}" pattern="dd/MM/yyyy" />
 
-                    <p:outputLabel value="Endereço:" for="endEdit" />
-                    <p:inputText id="endEdit" value="#{usuarioController.selected.endereco}" />
                 </p:panelGrid>
 
                 <p:commandButton value="Salvar Alterações" action="#{usuarioController.editarUsuario}" 

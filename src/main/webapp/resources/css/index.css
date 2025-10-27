@@ -1,6 +1,5 @@
 /* ===== index.css ===== */
 
-/* Fundo geral: preto quase puro com toque avermelhado suave */
 body {
     background: radial-gradient(circle at bottom, #080000 0%, #000000 100%);
     color: #fff;
@@ -9,7 +8,7 @@ body {
     font-family: 'Segoe UI', sans-serif;
 }
 
-/* Header (mantém o topo como está) */
+/* ===== HEADER ===== */
 header {
     display: flex;
     justify-content: space-between;
@@ -18,6 +17,7 @@ header {
     padding: 8px 20px;
     box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
     border-bottom: 1px solid rgba(255, 0, 0, 0.3);
+    position: relative; /* permite centralizar o título */
 }
 
 header .logo img {
@@ -25,25 +25,31 @@ header .logo img {
     width: auto;
 }
 
+/* Centraliza o título "Nishin Store" */
 header h2 {
-    color: #ff2020;
+    color: #fff !important;
     text-shadow: 0 0 8px #ff2020;
     margin: 0;
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+    font-weight: bold;
 }
 
+/* Botões à direita */
 .actions {
     display: flex;
     gap: 10px;
 }
 
-/* Remove fundo branco geral da área de produtos */
+/* ===== CONTEÚDO PRINCIPAL ===== */
 .main-container {
     padding: 2rem;
     text-align: center;
     background-color: transparent !important;
 }
 
-/* Remove fundo branco do DataGrid e das células */
+/* Remove fundo branco do DataGrid */
 .ui-datagrid, 
 .ui-datagrid-content, 
 .ui-datagrid-row, 
@@ -63,23 +69,23 @@ header h2 {
     margin-bottom: 2rem;
 }
 
-/* Título do painel (nome do produto) */
+/* Título do painel agora branco */
 .ui-panel .ui-panel-titlebar {
     background-color: #0b0000 !important;
-    color: #ff2020 !important;
+    color: #fff !important;
     font-weight: bold;
     text-align: center;
     border-bottom: 1px solid rgba(255, 32, 32, 0.2) !important;
 }
 
-/* Conteúdo interno do painel */
+/* Conteúdo do painel também branco */
 .ui-panel .ui-panel-content {
     background-color: #0b0000 !important;
-    color: #ddd !important;
+    color: #fff !important;
     padding: 1rem;
 }
 
-/* Botões padrão PrimeFaces (azul padrão preservado) */
+/* Botões */
 .ui-commandbutton, .ui-button {
     background-color: #007ad9 !important;
     border: none !important;
@@ -93,8 +99,7 @@ header h2 {
     box-shadow: 0 0 8px rgba(0, 122, 217, 0.4);
 }
 
-/* Paginação */
-/* garante que a paginação superior não apareça */
+/* ===== PAGINAÇÃO ===== */
 .ui-paginator .ui-paginator-top {
     display: none !important;
 }

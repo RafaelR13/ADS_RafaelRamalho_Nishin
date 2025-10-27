@@ -1,35 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit this template
+-->
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
       xmlns:p="http://primefaces.org/ui">
 
-<h:head>
-    <title>Login - Nishin Store</title>
-    <h:outputStylesheet library="css" name="base.css"/>
-    <h:outputStylesheet library="css" name="login.css"/>
-</h:head>
+    <h:head>
+        <title>Login - Nishin Store</title>
+        <h:outputStylesheet library="css" name="base.css"/>
+        <h:outputStylesheet library="css" name="login.css"/>
+    </h:head>
 
-<h:body>
-    <div class="login-container">
-        <h:form>
-            <p:graphicImage library="images" name="nishin-logo.png" alt="Logo"/>
-            <h2>Bem-vindo à Nishin Store</h2>
+    <h:body>
+        <div class="login-container">
+            <h:form>
+                <h:outputLink value="index.xhtml" styleClass="logo-link">
+                    <p:graphicImage library="images" name="nishin-logo.png" alt="Logo" styleClass="logo-img"/>
+                </h:outputLink>
+                <h2>Bem-vindo à Nishin Store</h2>
 
-            <div class="input-field">
-                <p:inputText id="email" value="#{loginController.email}" placeholder="E-mail" required="true"/>
-            </div>
-            <div class="input-field">
-                <p:password id="senha" value="#{loginController.senha}" placeholder="Senha" required="true"/>
-            </div>
+                <div class="input-field">
+                    <p:inputText id="email"
+                                 value="#{loginController.usuario.email}"
+                                 placeholder="E-mail"
+                                 required="true"
+                                 requiredMessage="E-mail é obrigatório."
+                                 styleClass="ui-inputtext"/>
+                </div>
 
-            <p:commandButton value="Entrar" action="#{loginController.login}" styleClass="login-button" icon="pi pi-sign-in"/>
+                <div class="input-field">
+                    <p:password id="senha"
+                                value="#{loginController.usuario.senha}"
+                                placeholder="Senha"
+                                required="true"
+                                feedback="false"
+                                requiredMessage="Senha é obrigatória."
+                                styleClass="ui-password"/>
+                </div>
 
-            <h:outputLink value="cadastro.xhtml" styleClass="register-link">
-                Ainda não tem conta? Cadastre-se
-            </h:outputLink>
+                <p:commandButton value="Entrar"
+                                 action="#{loginController.validarLogin}"
+                                 update="@form growl"
+                                 icon="pi pi-sign-in"
+                                 styleClass="login-button"/>
 
-            <p:growl id="growl" showDetail="true"/>
-        </h:form>
-    </div>
-</h:body>
+                <h:outputLink value="cadastro.xhtml" styleClass="register-link">
+                    Ainda não tem conta? Cadastre-se
+                </h:outputLink>
+
+                <p:growl id="growl" showDetail="true" life="4000"/>
+            </h:form>
+        </div>
+    </h:body>
 </html>
