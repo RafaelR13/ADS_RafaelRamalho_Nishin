@@ -8,7 +8,6 @@ package com.upf.nishin.entity;
  *
  * @author User
  */
-
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.time.LocalDate;
@@ -21,7 +20,7 @@ public class UsuarioEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    @Column(name = "id_usuario") 
+    @Column(name = "id_usuario")
     private Integer idUsuario;
 
     @Column(name = "nome", nullable = false, length = 150)
@@ -41,6 +40,9 @@ public class UsuarioEntity implements Serializable {
 
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
+    
+    @Column(name = "admin", nullable = false)
+    private boolean admin = false;
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -96,6 +98,14 @@ public class UsuarioEntity implements Serializable {
 
     public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
+    }
+    
+     public boolean isAdmin() {
+        return admin;
+    }
+
+    public void setAdmin(boolean admin) {
+        this.admin = admin;
     }
 
     @Override

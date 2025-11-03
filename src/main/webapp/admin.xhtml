@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+    <h:head>
+        <title>Painel Administrativo - Nishin Store</title>
+        <h:outputStylesheet library="css" name="base.css"/>
+        <h:outputStylesheet library="css" name="index.css"/>
+    </h:head>
+
+    <h:body style="background-color:#0b0000; color:white; text-align:center; padding-top:80px;">
+        <h:form id="frmAdmin">
+            <h2>Painel Administrativo</h2>
+
+            <div style="margin-top:30px;">
+                <p:commandButton value="Gerenciar Produtos" icon="pi pi-box"
+                                 action="produtos.xhtml?faces-redirect=true"
+                                 ajax="false"
+                                 styleClass="ui-button-info" style="margin:15px;"/>
+
+                <p:commandButton value="Gerenciar Usuários" icon="pi pi-users"
+                                 action="usuarios.xhtml?faces-redirect=true"
+                                 ajax="false"
+                                 styleClass="ui-button-info" style="margin:15px;"/>
+            </div>
+
+            <footer>
+                <p>© 2025 Nishin Store - Painel Administrativo</p>
+            </footer>
+        </h:form>
+    </h:body>
+</html>

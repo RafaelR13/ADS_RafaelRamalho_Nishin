@@ -1,5 +1,6 @@
 /* ===== index.css ===== */
 
+/* ===== GERAL ===== */
 body {
     background: radial-gradient(circle at bottom, #080000 0%, #000000 100%);
     color: #fff;
@@ -17,7 +18,7 @@ header {
     padding: 8px 20px;
     box-shadow: 0 0 12px rgba(255, 0, 0, 0.4);
     border-bottom: 1px solid rgba(255, 0, 0, 0.3);
-    position: relative; /* permite centralizar o título */
+    position: relative;
 }
 
 header .logo img {
@@ -50,43 +51,69 @@ header h2 {
 }
 
 /* Remove fundo branco do DataGrid */
-.ui-datagrid, 
-.ui-datagrid-content, 
-.ui-datagrid-row, 
-.ui-widget-content, 
+.ui-datagrid,
+.ui-datagrid-content,
+.ui-datagrid-row,
+.ui-widget-content,
 .ui-dataview {
     background-color: transparent !important;
     border: none !important;
     box-shadow: none !important;
 }
 
-/* Painéis dos produtos */
-.ui-panel {
-    background-color: #0b0000 !important;
-    border: 1px solid rgba(255, 32, 32, 0.25) !important;
-    border-radius: 10px !important;
-    box-shadow: 0 0 12px rgba(255, 0, 0, 0.15);
-    margin-bottom: 2rem;
-}
-
-/* Título do painel agora branco */
-.ui-panel .ui-panel-titlebar {
-    background-color: #0b0000 !important;
-    color: #fff !important;
-    font-weight: bold;
+/* ===== NOVO: CARDS DE PRODUTO ===== */
+.produto-card {
+    background-color: #1a1a1a;
+    border: 1px solid rgba(255, 32, 32, 0.4);
+    border-radius: 10px;
+    padding: 12px;
     text-align: center;
-    border-bottom: 1px solid rgba(255, 32, 32, 0.2) !important;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease, border 0.2s ease;
+    box-shadow: 0 0 8px rgba(255, 0, 0, 0.1);
 }
 
-/* Conteúdo do painel também branco */
-.ui-panel .ui-panel-content {
-    background-color: #0b0000 !important;
-    color: #fff !important;
-    padding: 1rem;
+.produto-card:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 0 15px rgba(255, 32, 32, 0.5);
+    border-color: rgba(255, 64, 64, 0.8);
 }
 
-/* Botões */
-.ui-commandbutton, .ui-button {
+.produto-card h4 {
+    color: #fff;
+    margin: 10px 0 5px;
+    font-size: 1.1rem;
+}
+
+.produto-card h4:hover {
+    color: #ff4444;
+}
+
+.produto-card .produto-imagem img {
+    width: 100%;
+    height: 180px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.produto-card .produto-info {
+    margin-top: 10px;
+}
+
+.produto-card .produto-info h4 {
+    font-weight: bold;
+}
+
+.produto-card .produto-info span {
+    display: block;
+    margin-top: 5px;
+    font-weight: bold;
+    color: #ff4444;
+}
+
+/* ===== BOTÕES ===== */
+.ui-commandbutton,
+.ui-button {
     background-color: #007ad9 !important;
     border: none !important;
     color: #fff !important;
@@ -94,7 +121,8 @@ header h2 {
     transition: 0.3s;
 }
 
-.ui-commandbutton:hover, .ui-button:hover {
+.ui-commandbutton:hover,
+.ui-button:hover {
     background-color: #005b9f !important;
     box-shadow: 0 0 8px rgba(0, 122, 217, 0.4);
 }
@@ -124,4 +152,45 @@ header h2 {
     background-color: #ff2020 !important;
     color: #fff !important;
     box-shadow: 0 0 10px rgba(255, 32, 32, 0.4);
+}
+
+/* ===== FOOTER ===== */
+footer {
+    background-color: #1a1a1a; /* mesma cor do header */
+    color: #ccc;
+    text-align: center;
+    padding: 10px 20px;
+    border-top: 1px solid rgba(255, 0, 0, 0.3);
+    box-shadow: 0 -2px 8px rgba(255, 0, 0, 0.2);
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    z-index: 1000;
+}
+
+/* Texto centralizado */
+footer p, .footer-text {
+    margin: 0;
+    font-size: 0.9rem;
+    color: #ccc;
+}
+
+/* Botão de configurações (apenas admin) */
+footer .admin-config-btn {
+    position: absolute;
+    left: 30px; /* canto esquerdo */
+    top: 50%;
+    transform: translateY(-50%);
+    background-color: #ff2020 !important;
+    border: none !important;
+    color: #fff !important;
+    font-weight: bold;
+    border-radius: 8px !important;
+    transition: 0.3s;
+}
+
+footer .admin-config-btn:hover {
+    background-color: #d81818 !important;
+    box-shadow: 0 0 12px rgba(255, 0, 0, 0.5);
 }

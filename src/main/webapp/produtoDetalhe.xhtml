@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+<h:head>
+    <title>Detalhes do Produto</title>
+    <h:outputStylesheet library="css" name="base.css"/>
+</h:head>
+
+<h:body style="background-color:#0b0000; color:white; text-align:center; padding-top:50px;">
+    <h:form>
+        <h1>#{produtoController.produtoSelecionado.nome}</h1>
+        <p:graphicImage value="#{produtoController.produtoSelecionado.imagem}" style="width:300px; height:300px; object-fit:cover; border-radius:10px;"/>
+        <h3 style="margin-top:15px;">R$ #{produtoController.produtoSelecionado.preco}</h3>
+        <p style="max-width:500px; margin:auto;">#{produtoController.produtoSelecionado.descricao}</p>
+
+        <p:commandButton value="Adicionar ao Carrinho"
+                         icon="pi pi-cart-plus"
+                         actionListener="#{carrinhoController.adicionarProduto(produtoController.produtoSelecionado)}"
+                         update="@form"
+                         styleClass="ui-button-danger"
+                         style="margin-top:20px;"/>
+
+        <br/>
+        <p:commandButton value="Voltar" icon="pi pi-arrow-left"
+                 action="index.xhtml?faces-redirect=true"
+                 ajax="false"
+                 styleClass="ui-button-secondary"
+                 style="margin-top:10px;"/>
+
+    </h:form>
+</h:body>
+</html>
+
