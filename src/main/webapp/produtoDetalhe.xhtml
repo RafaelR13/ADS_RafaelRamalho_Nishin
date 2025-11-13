@@ -6,34 +6,56 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
-<h:head>
-    <title>Detalhes do Produto</title>
-    <h:outputStylesheet library="css" name="base.css"/>
-</h:head>
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="http://xmlns.jcp.org/jsf/core">
 
-<h:body style="background-color:#0b0000; color:white; text-align:center; padding-top:50px;">
-    <h:form>
-        <h1>#{produtoController.produtoSelecionado.nome}</h1>
-        <p:graphicImage value="#{produtoController.produtoSelecionado.imagem}" style="width:300px; height:300px; object-fit:cover; border-radius:10px;"/>
-        <h3 style="margin-top:15px;">R$ #{produtoController.produtoSelecionado.preco}</h3>
-        <p style="max-width:500px; margin:auto;">#{produtoController.produtoSelecionado.descricao}</p>
+    <h:head>
+        <title>Detalhes do Produto</title>
+        <h:outputStylesheet library="css" name="base.css"/>
+    </h:head>
 
-        <p:commandButton value="Adicionar ao Carrinho"
-                         icon="pi pi-cart-plus"
-                         actionListener="#{carrinhoController.adicionarProduto(produtoController.produtoSelecionado)}"
-                         update="@form"
-                         styleClass="ui-button-danger"
-                         style="margin-top:20px;"/>
+    <h:body style="background-color:#0b0000; color:white; text-align:center; padding-top:50px;">
 
-        <br/>
-        <p:commandButton value="Voltar" icon="pi pi-arrow-left"
-                 action="index.xhtml?faces-redirect=true"
-                 ajax="false"
-                 styleClass="ui-button-secondary"
-                 style="margin-top:10px;"/>
+        <h:form id="formProduto">
 
-    </h:form>
-</h:body>
+            <!-- ==== Detalhes do Produto ==== -->
+            <h1>#{produtoController.selected.nome}</h1>
+
+            <p:graphicImage value="#{produtoController.selected.imagem}"
+                            style="width:300px; height:300px; object-fit:cover; border-radius:10px;"/>
+
+            <h3 style="margin-top:15px;">
+                R$ <h:outputText value="#{produtoController.selected.preco}">
+                    <f:convertNumber type="currency" currencySymbol="" minFractionDigits="2" />
+                </h:outputText>
+            </h3>
+
+            <p style="max-width:500px; margin:auto; font-size:1.1em;">
+                #{produtoController.selected.descricao}
+            </p>
+
+            <!-- ==== Botão de Adicionar ao Carrinho ==== -->
+            <p:commandButton value="Adicionar ao Carrinho"
+                             icon="pi pi-cart-plus"
+                             action="#{carrinhoController.adicionarProduto(produtoController.selected)}"
+                             ajax="false"
+                             styleClass="ui-button-danger"
+                             style="margin-top:20px;"/>
+
+            <br/>
+
+            <!-- ==== Botão de Voltar ==== -->
+            <p:commandButton value="Voltar"
+                             icon="pi pi-arrow-left"
+                             action="index.xhtml?faces-redirect=true"
+                             ajax="false"
+                             styleClass="ui-button-secondary"
+                             style="margin-top:10px;"/>
+
+            <!-- Growl para mensagens -->
+            <p:growl id="growl" showDetail="true" life="4000"/>
+
+        </h:form>
+
+    </h:body>
 </html>
-

@@ -14,13 +14,11 @@ import com.upf.nishin.facade.ProdutoFacade;
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
+import jakarta.faces.application.FacesMessage;
+import jakarta.faces.context.FacesContext;
 import java.io.Serializable;
 import java.util.List;
 
-/**
- * Controlador de produtos da Nishin Store.
- * Agora inclui suporte para exibir detalhes de um produto ao clicar no card.
- */
 @Named("produtoController")
 @SessionScoped
 public class ProdutoController implements Serializable {
@@ -55,32 +53,46 @@ public class ProdutoController implements Serializable {
 
     /* ==================== CRUD ==================== */
     public void adicionarProduto() {
-        produtoFacade.create(produto);
-        produto = new ProdutoEntity(); // limpa o formulário
+        try {
+            produtoFacade.create(produto);
+            adicionarMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Produto cadastrado com sucesso!");
+            produto = new ProdutoEntity(); // limpa o formulário
+        } catch (Exception e) {
+            adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Não foi possível adicionar o produto.");
+        }
     }
 
     public void editarProduto() {
         if (selected != null) {
-            produtoFacade.edit(selected);
-            selected = null;
+            try {
+                produtoFacade.edit(selected);
+                adicionarMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Produto atualizado com sucesso!");
+                selected = null;
+            } catch (Exception e) {
+                adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Falha ao atualizar o produto.");
+            }
         }
     }
 
     public void deletarProduto() {
         if (selected != null) {
-            produtoFacade.remove(selected);
-            selected = null;
+            try {
+                produtoFacade.remove(selected);
+                adicionarMensagem(FacesMessage.SEVERITY_INFO, "Removido", "Produto excluído com sucesso!");
+                selected = null;
+            } catch (Exception e) {
+                adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Erro ao excluir o produto.");
+            }
         }
     }
 
     /* ==================== DETALHES DO PRODUTO ==================== */
     /**
      * Define o produto clicado e redireciona para a página de detalhes.
-     * Pode ser chamado por um p:commandLink no card do produto.
      */
     public String visualizarProduto(ProdutoEntity produtoSelecionado) {
         this.selected = produtoSelecionado;
-        return "detalhesProduto.xhtml?faces-redirect=true";
+        return "produtoDetalhe.xhtml?faces-redirect=true";
     }
 
     /**
@@ -96,5 +108,9 @@ public class ProdutoController implements Serializable {
     public void limparSelecao() {
         this.selected = null;
     }
-}
 
+    /* ==================== UTILITÁRIOS ==================== */
+    private void adicionarMensagem(FacesMessage.Severity severity, String titulo, String detalhe) {
+        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, titulo, detalhe));
+    }
+}

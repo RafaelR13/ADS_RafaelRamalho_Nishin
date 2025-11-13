@@ -9,101 +9,172 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
       xmlns:f="http://java.sun.com/jsf/core"
       xmlns:p="http://primefaces.org/ui">
 
-<h:head>
-    <title>Gerenciar Produtos</title>
-</h:head>
+    <h:head>
+        <title>Gerenciar Produtos</title>
+        <h:outputStylesheet name="css/base.css" />
+        <h:outputStylesheet name="css/produtos.css" />
+    </h:head>
 
-<h:body>
-    <h:form id="frmList">
-        <p:growl id="msgs" showDetail="true" />
+    <h:body class="pagina-produtos">
 
-        <p:dataTable value="#{produtoController.produtoList}" var="p"
-                     selection="#{produtoController.selected}"
-                     selectionMode="single" rowKey="#{p.idProduto}"
-                     paginator="true" rows="5">
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <h:outputLink value="index.xhtml" styleClass="logo-link">
+                    <p:graphicImage library="images" name="nishin-logo.png" alt="Logo" styleClass="logo-img"/>
+                </h:outputLink>
+            </div>
 
-            <p:column headerText="ID">
-                <h:outputText value="#{p.idProduto}" />
-            </p:column>
+            <h2>Gerenciamento de Produtos</h2>
+            <div class="actions">
+                <p:commandButton value="Voltar" icon="pi pi-arrow-left"
+                                 action="admin.xhtml?faces-redirect=true"
+                                 styleClass="botao-voltar" />
+            </div>
+        </header>
 
-            <p:column headerText="Nome">
-                <h:outputText value="#{p.nome}" />
-            </p:column>
+        <!-- TÍTULO -->
+        <h2 class="titulo-pagina">Lista de Produtos</h2>
 
-            <p:column headerText="Preço">
-                <h:outputText value="#{p.preco}" />
-            </p:column>
+        <!-- FORM PRINCIPAL -->
+        <h:form id="formProdutos">
 
-            <p:column headerText="Estoque">
-                <h:outputText value="#{p.estoque}" />
-            </p:column>
-        </p:dataTable>
+            <!-- TABELA DE PRODUTOS -->
+            <p:dataTable id="tabelaProdutos"
+                         value="#{produtoController.produtoList}"
+                         var="p"
+                         selectionMode="single"
+                         selection="#{produtoController.selected}"
+                         rowKey="#{p.idProduto}"
+                         styleClass="tabela-produtos"
+                         paginator="true"
+                         paginatorPosition="bottom"
+                         rows="10"
+                         emptyMessage="Nenhum produto cadastrado.">
 
-        <br/>
+                <p:ajax event="rowSelect" update=":formBotoes" />
+                <p:ajax event="rowUnselect" update=":formBotoes" />
 
-        <p:commandButton value="Novo Produto" icon="pi pi-plus"
-                         onclick="PF('dlgCadastro').show(); return false;" />
+                <p:column headerText="ID" width="60">
+                    <h:outputText value="#{p.idProduto}" />
+                </p:column>
 
-        <p:commandButton value="Editar" icon="pi pi-pencil"
-                         onclick="PF('dlgEdicao').show(); return false;"
-                         disabled="#{produtoController.selected == null}" />
+                <p:column headerText="Nome">
+                    <h:outputText value="#{p.nome}" />
+                </p:column>
 
-        <p:commandButton value="Excluir" icon="pi pi-trash"
-                         action="#{produtoController.deletarProduto}"
-                         update="frmList msgs"
-                         disabled="#{produtoController.selected == null}" />
+                <p:column headerText="Preço">
+                    <h:outputText value="#{p.preco}">
+                        <f:convertNumber type="currency" currencySymbol="R$ " />
+                    </h:outputText>
+                </p:column>
 
-        <!-- Diálogo de Cadastro -->
-        <p:dialog header="Cadastro de Produto" widgetVar="dlgCadastro" modal="true" resizable="false">
-            <h:form id="frmCadastro">
-                <p:panelGrid columns="2">
+                <p:column headerText="Descrição">
+                    <h:outputText value="#{p.descricao}" />
+                </p:column>
+
+                <p:column headerText="Quantidade em Estoque">
+                    <h:outputText value="#{p.estoque}" />
+                </p:column>
+
+                <p:column headerText="Imagem (URL)">
+                    <h:outputText value="#{p.imagem}" />
+                </p:column>
+
+            </p:dataTable>
+        </h:form>
+
+        <!-- BOTÕES DE AÇÃO -->
+        <h:form id="formBotoes" class="botoes-container">
+            <p:commandButton value="Novo Produto" icon="pi pi-plus"
+                             onclick="PF('dlgNovo').show(); return false;"
+                             styleClass="ui-button-success" />
+
+            <p:commandButton value="Editar" icon="pi pi-pencil"
+                             oncomplete="PF('dlgEditar').show();"
+                             process="@this"
+                             update=":formEditar"
+                             disabled="#{empty produtoController.selected}"
+                             styleClass="ui-button-warning" />
+
+            <p:commandButton value="Excluir" icon="pi pi-trash"
+                             actionListener="#{produtoController.deletarProduto}"
+                             update=":formProdutos :formBotoes"
+                             styleClass="ui-button-danger"
+                             disabled="#{empty produtoController.selected}" />
+        </h:form>
+
+        <!-- DIÁLOGO: NOVO PRODUTO -->
+        <p:dialog header="Novo Produto" widgetVar="dlgNovo"
+                  modal="true" resizable="false" closable="true" width="550">
+            <h:form id="formNovo" class="formulario-produto">
+
+                <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">
                     <p:outputLabel value="Nome:" for="nome" />
                     <p:inputText id="nome" value="#{produtoController.produto.nome}" required="true" />
 
-                    <p:outputLabel value="Descrição:" for="desc" />
-                    <p:inputTextarea id="desc" value="#{produtoController.produto.descricao}" rows="3" cols="30" />
-
                     <p:outputLabel value="Preço:" for="preco" />
-                    <p:inputText id="preco" value="#{produtoController.produto.preco}" required="true" />
+                    <p:inputText id="preco" value="#{produtoController.produto.preco}" required="true">
+                        <f:convertNumber locale="pt_BR" />
+                    </p:inputText>
 
-                    <p:outputLabel value="Estoque:" for="estoque" />
+                    <p:outputLabel value="Descrição:" for="descricao" />
+                    <p:inputTextarea id="descricao" value="#{produtoController.produto.descricao}" rows="3" autoResize="true" />
+
+                    <p:outputLabel value="Quantidade em Estoque:" for="estoque" />
                     <p:inputText id="estoque" value="#{produtoController.produto.estoque}" />
 
-                    <p:outputLabel value="Imagem (URL):" for="img" />
-                    <p:inputText id="img" value="#{produtoController.produto.imagem}" />
+                    <p:outputLabel value="Imagem (URL):" for="imagem" />
+                    <p:inputText id="imagem" value="#{produtoController.produto.imagem}" />
                 </p:panelGrid>
 
-                <p:commandButton value="Salvar" action="#{produtoController.adicionarProduto}" 
-                                 update=":frmList :msgs" 
-                                 oncomplete="PF('dlgCadastro').hide();" />
+                <div class="acoes-dialogo">
+                    <p:commandButton value="Salvar" icon="pi pi-check"
+                                     actionListener="#{produtoController.adicionarProduto}"
+                                     update=":formProdutos"
+                                     oncomplete="PF('dlgNovo').hide()" />
+                    <p:commandButton value="Cancelar" icon="pi pi-times"
+                                     onclick="PF('dlgNovo').hide(); return false;" />
+                </div>
+
             </h:form>
         </p:dialog>
 
-        <!-- Diálogo de Edição -->
-        <p:dialog header="Editar Produto" widgetVar="dlgEdicao" modal="true" resizable="false">
-            <h:form id="frmEdicao">
-                <p:panelGrid columns="2">
+        <!-- DIÁLOGO: EDITAR PRODUTO -->
+        <p:dialog header="Editar Produto" widgetVar="dlgEditar"
+                  modal="true" resizable="false" closable="true" width="550">
+            <h:form id="formEditar" class="formulario-produto">
+
+                <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">
                     <p:outputLabel value="Nome:" for="nomeEdit" />
                     <p:inputText id="nomeEdit" value="#{produtoController.selected.nome}" required="true" />
 
-                    <p:outputLabel value="Descrição:" for="descEdit" />
-                    <p:inputTextarea id="descEdit" value="#{produtoController.selected.descricao}" rows="3" cols="30" />
-
                     <p:outputLabel value="Preço:" for="precoEdit" />
-                    <p:inputText id="precoEdit" value="#{produtoController.selected.preco}" />
+                    <p:inputText id="precoEdit" value="#{produtoController.selected.preco}" required="true">
+                        <f:convertNumber locale="pt_BR" />
+                    </p:inputText>
 
-                    <p:outputLabel value="Estoque:" for="estoqueEdit" />
+                    <p:outputLabel value="Descrição:" for="descricaoEdit" />
+                    <p:inputTextarea id="descricaoEdit" value="#{produtoController.selected.descricao}" rows="3" autoResize="true" />
+
+                    <p:outputLabel value="Quantidade em Estoque:" for="estoqueEdit" />
                     <p:inputText id="estoqueEdit" value="#{produtoController.selected.estoque}" />
 
-                    <p:outputLabel value="Imagem (URL):" for="imgEdit" />
-                    <p:inputText id="imgEdit" value="#{produtoController.selected.imagem}" />
+                    <p:outputLabel value="Imagem (URL):" for="imagemEdit" />
+                    <p:inputText id="imagemEdit" value="#{produtoController.selected.imagem}" />
                 </p:panelGrid>
 
-                <p:commandButton value="Salvar Alterações" action="#{produtoController.editarProduto}" 
-                                 update=":frmList :msgs" 
-                                 oncomplete="PF('dlgEdicao').hide();" />
+                <div class="acoes-dialogo">
+                    <p:commandButton value="Salvar Alterações" icon="pi pi-check"
+                                     actionListener="#{produtoController.editarProduto}"
+                                     update=":formProdutos"
+                                     oncomplete="PF('dlgEditar').hide()" />
+                    <p:commandButton value="Cancelar" icon="pi pi-times"
+                                     onclick="PF('dlgEditar').hide(); return false;" />
+                </div>
+
             </h:form>
         </p:dialog>
-    </h:form>
-</h:body>
+
+    </h:body>
 </html>

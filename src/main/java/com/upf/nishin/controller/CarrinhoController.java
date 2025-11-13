@@ -16,6 +16,7 @@ import jakarta.faces.context.FacesContext;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.servlet.http.HttpSession;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
@@ -45,14 +46,18 @@ public class CarrinhoController implements Serializable {
         return itens;
     }
 
-    /** Obtém o usuário logado da sessão **/
+    /**
+     * Obtém o usuário logado da sessão *
+     */
     private UsuarioEntity getUsuarioSessao() {
         FacesContext context = FacesContext.getCurrentInstance();
         HttpSession session = (HttpSession) context.getExternalContext().getSession(false);
         return session != null ? (UsuarioEntity) session.getAttribute("usuarioLogado") : null;
     }
 
-    /** Garante que o carrinho do usuário exista no banco **/
+    /**
+     * Garante que o carrinho do usuário exista no banco *
+     */
     private void garantirCarrinhoUsuario() {
         UsuarioEntity usuario = getUsuarioSessao();
 
@@ -77,20 +82,19 @@ public class CarrinhoController implements Serializable {
         itens = itemCarrinhoFacade.findByCarrinho(carrinho);
     }
 
-    /** Adiciona um produto ao carrinho (salvando no banco) **/
-    public void adicionarProduto(ProdutoEntity produto) {
+    /**
+     * Adiciona um produto ao carrinho (salvando no banco) *
+     */
+    public String adicionarProduto(ProdutoEntity produto) {
         FacesContext context = FacesContext.getCurrentInstance();
         UsuarioEntity usuario = getUsuarioSessao();
 
         if (usuario == null) {
-            context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_WARN,
-                    "Atenção", "Você precisa estar logado para adicionar produtos ao carrinho."));
-            return;
+            return "/login.xhtml?faces-redirect=true";
         }
 
         garantirCarrinhoUsuario();
 
-        // Verifica se o produto já existe no carrinho
         ItemCarrinhoEntity itemExistente = itemCarrinhoFacade.findByCarrinhoAndProduto(carrinho, produto);
 
         if (itemExistente != null) {
@@ -104,16 +108,61 @@ public class CarrinhoController implements Serializable {
             itemCarrinhoFacade.create(novoItem);
         }
 
-        // Atualiza data do carrinho e lista
         carrinho.setDataAtualizacao(new Date());
         carrinhoFacade.edit(carrinho);
         itens = itemCarrinhoFacade.findByCarrinho(carrinho);
 
+        // ✅ Usando Flash Scope para manter a mensagem após o redirect
+        context.getExternalContext().getFlash().setKeepMessages(true);
         context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
                 "Sucesso", produto.getNome() + " foi adicionado ao seu carrinho!"));
+
+        // ✅ Retorna para o index.xhtml com redirect
+        return "/index.xhtml?faces-redirect=true";
     }
 
-    /** Redireciona para o carrinho ou login **/
+    public String verificarLoginAntesDeAdicionar(ProdutoEntity produto) {
+        FacesContext context = FacesContext.getCurrentInstance();
+        UsuarioEntity usuario = getUsuarioSessao();
+
+        // 🔒 Se o usuário não estiver logado, manda pro login
+        if (usuario == null) {
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "Atenção",
+                    "Você precisa estar logado para adicionar produtos ao carrinho."
+            ));
+            return "login.xhtml?faces-redirect=true";
+        }
+
+        try {
+            // Adiciona o produto ao carrinho
+            adicionarProduto(produto);
+
+            // ✅ Mensagem de sucesso
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_INFO,
+                    "Sucesso",
+                    produto.getNome() + " foi adicionado ao seu carrinho!"
+            ));
+
+            // 🔁 Redireciona para o index
+            return "index.xhtml?faces-redirect=true";
+
+        } catch (Exception e) {
+            // ❌ Caso ocorra erro
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Erro",
+                    "Ocorreu um problema ao adicionar o produto ao carrinho."
+            ));
+            return null;
+        }
+    }
+
+    /**
+     * Redireciona para o carrinho ou login *
+     */
     public String irParaCarrinho() {
         UsuarioEntity usuario = getUsuarioSessao();
         return (usuario == null)
@@ -121,7 +170,9 @@ public class CarrinhoController implements Serializable {
                 : "/carrinho.xhtml?faces-redirect=true";
     }
 
-    /** Remove um item do carrinho **/
+    /**
+     * Remove um item do carrinho *
+     */
     public void removerItem(ItemCarrinhoEntity item) {
         if (item != null) {
             itemCarrinhoFacade.remove(item);
@@ -129,14 +180,18 @@ public class CarrinhoController implements Serializable {
         }
     }
 
-    /** Calcula o valor total **/
+    /**
+     * Calcula o valor total *
+     */
     public Double getValorTotal() {
         return itens.stream()
                 .mapToDouble(i -> i.getProduto().getPreco() * i.getQuantidade())
                 .sum();
     }
 
-    /** Limpa todos os itens do carrinho **/
+    /**
+     * Limpa todos os itens do carrinho *
+     */
     public void limparCarrinho() {
         for (ItemCarrinhoEntity i : new ArrayList<>(itens)) {
             itemCarrinhoFacade.remove(i);
@@ -144,14 +199,18 @@ public class CarrinhoController implements Serializable {
         itens.clear();
     }
 
-    /** Simula uma finalização de compra **/
+    /**
+     * Simula uma finalização de compra *
+     */
     public void finalizarCompra() {
         limparCarrinho();
         FacesContext.getCurrentInstance().addMessage(null,
                 new FacesMessage(FacesMessage.SEVERITY_INFO, "Compra finalizada!", "Seu pedido foi criado com sucesso!"));
     }
 
-    /** Retorna quantidade total de produtos **/
+    /**
+     * Retorna quantidade total de produtos *
+     */
     public int getTotalItens() {
         return itens != null
                 ? itens.stream().mapToInt(ItemCarrinhoEntity::getQuantidade).sum()
