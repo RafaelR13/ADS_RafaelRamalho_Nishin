@@ -26,6 +26,7 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
             </div>
 
             <h2>Gerenciamento de Produtos</h2>
+
             <div class="actions">
                 <p:commandButton value="Voltar" icon="pi pi-arrow-left"
                                  action="admin.xhtml?faces-redirect=true"
@@ -46,7 +47,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                          selectionMode="single"
                          selection="#{produtoController.selected}"
                          rowKey="#{p.idProduto}"
-                         styleClass="tabela-produtos"
                          paginator="true"
                          paginatorPosition="bottom"
                          rows="10"
@@ -73,18 +73,18 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     <h:outputText value="#{p.descricao}" />
                 </p:column>
 
-                <p:column headerText="Quantidade em Estoque">
+                <p:column headerText="Estoque">
                     <h:outputText value="#{p.estoque}" />
                 </p:column>
 
-                <p:column headerText="Imagem (URL)">
-                    <h:outputText value="#{p.imagem}" />
+                <p:column headerText="Imagem">
+                    <p:graphicImage value="#{p.imagem}" width="60" height="60" rendered="#{not empty p.imagem}" />
                 </p:column>
 
             </p:dataTable>
         </h:form>
 
-        <!-- BOTÕES DE AÇÃO -->
+        <!-- BOTÕES -->
         <h:form id="formBotoes" class="botoes-container">
             <p:commandButton value="Novo Produto" icon="pi pi-plus"
                              onclick="PF('dlgNovo').show(); return false;"
@@ -92,7 +92,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 
             <p:commandButton value="Editar" icon="pi pi-pencil"
                              oncomplete="PF('dlgEditar').show();"
-                             process="@this"
                              update=":formEditar"
                              disabled="#{empty produtoController.selected}"
                              styleClass="ui-button-warning" />
@@ -104,12 +103,13 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                              disabled="#{empty produtoController.selected}" />
         </h:form>
 
-        <!-- DIÁLOGO: NOVO PRODUTO -->
+        <!-- NOVO PRODUTO -->
         <p:dialog header="Novo Produto" widgetVar="dlgNovo"
-                  modal="true" resizable="false" closable="true" width="550">
-            <h:form id="formNovo" class="formulario-produto">
+                  modal="true" resizable="false" width="550">
+            <h:form id="formNovo" enctype="multipart/form-data">
 
-                <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">
+                <p:panelGrid columns="2" columnClasses="label,value">
+
                     <p:outputLabel value="Nome:" for="nome" />
                     <p:inputText id="nome" value="#{produtoController.produto.nome}" required="true" />
 
@@ -119,13 +119,20 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     </p:inputText>
 
                     <p:outputLabel value="Descrição:" for="descricao" />
-                    <p:inputTextarea id="descricao" value="#{produtoController.produto.descricao}" rows="3" autoResize="true" />
+                    <p:inputTextarea id="descricao" value="#{produtoController.produto.descricao}" rows="3" />
 
-                    <p:outputLabel value="Quantidade em Estoque:" for="estoque" />
+                    <p:outputLabel value="Estoque:" for="estoque" />
                     <p:inputText id="estoque" value="#{produtoController.produto.estoque}" />
 
-                    <p:outputLabel value="Imagem (URL):" for="imagem" />
-                    <p:inputText id="imagem" value="#{produtoController.produto.imagem}" />
+                    <p:outputLabel value="Imagem:" for="uploadNovo" />
+                    <p:fileUpload id="uploadNovo"
+                                  mode="advanced"
+                                  auto="true"
+                                  listener="#{produtoController.uploadNovoListener}"
+                                  allowTypes="/(\.|\/)(jpg|jpeg|png)$/"
+                                  multiple="false"
+                                  label="Escolher Imagem" />
+
                 </p:panelGrid>
 
                 <div class="acoes-dialogo">
@@ -140,12 +147,14 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
             </h:form>
         </p:dialog>
 
-        <!-- DIÁLOGO: EDITAR PRODUTO -->
+        <!-- EDITAR PRODUTO -->
         <p:dialog header="Editar Produto" widgetVar="dlgEditar"
-                  modal="true" resizable="false" closable="true" width="550">
-            <h:form id="formEditar" class="formulario-produto">
+                  modal="true" resizable="false" width="550">
 
-                <p:panelGrid columns="2" columnClasses="label,value" styleClass="form-grid">
+            <h:form id="formEditar" enctype="multipart/form-data">
+
+                <p:panelGrid columns="2" columnClasses="label,value">
+
                     <p:outputLabel value="Nome:" for="nomeEdit" />
                     <p:inputText id="nomeEdit" value="#{produtoController.selected.nome}" required="true" />
 
@@ -155,17 +164,24 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     </p:inputText>
 
                     <p:outputLabel value="Descrição:" for="descricaoEdit" />
-                    <p:inputTextarea id="descricaoEdit" value="#{produtoController.selected.descricao}" rows="3" autoResize="true" />
+                    <p:inputTextarea id="descricaoEdit" value="#{produtoController.selected.descricao}" rows="3" />
 
-                    <p:outputLabel value="Quantidade em Estoque:" for="estoqueEdit" />
+                    <p:outputLabel value="Estoque:" for="estoqueEdit" />
                     <p:inputText id="estoqueEdit" value="#{produtoController.selected.estoque}" />
 
-                    <p:outputLabel value="Imagem (URL):" for="imagemEdit" />
-                    <p:inputText id="imagemEdit" value="#{produtoController.selected.imagem}" />
+                    <p:outputLabel value="Nova Imagem:" for="uploadEdit" />
+                    <p:fileUpload id="uploadEdit"
+                                  mode="advanced"
+                                  auto="true"
+                                  listener="#{produtoController.uploadEditListener}"
+                                  allowTypes="/(\.|\/)(jpg|jpeg|png)$/"
+                                  multiple="false"
+                                  label="Escolher Imagem" />
+
                 </p:panelGrid>
 
                 <div class="acoes-dialogo">
-                    <p:commandButton value="Salvar Alterações" icon="pi pi-check"
+                    <p:commandButton value="Salvar" icon="pi pi-check"
                                      actionListener="#{produtoController.editarProduto}"
                                      update=":formProdutos"
                                      oncomplete="PF('dlgEditar').hide()" />

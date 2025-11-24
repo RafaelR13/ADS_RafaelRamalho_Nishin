@@ -10,9 +10,11 @@ package com.upf.nishin.facade;
  */
 
 import com.upf.nishin.entity.PedidoEntity;
+import com.upf.nishin.entity.UsuarioEntity;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
+import java.util.List;
 
 @Stateless
 public class PedidoFacade extends AbstractFacade<PedidoEntity> {
@@ -27,5 +29,14 @@ public class PedidoFacade extends AbstractFacade<PedidoEntity> {
 
     public PedidoFacade() {
         super(PedidoEntity.class);
+    }
+
+    public List<PedidoEntity> listarPedidosPorUsuario(UsuarioEntity usuario) {
+        return em.createQuery(
+                "SELECT p FROM PedidoEntity p WHERE p.usuario = :usuario ORDER BY p.dataPedido DESC",
+                PedidoEntity.class
+        )
+        .setParameter("usuario", usuario)
+        .getResultList();
     }
 }

@@ -33,11 +33,15 @@ public class PedidoEntity implements Serializable {
     private Double valorTotal;
 
     @Column(length = 20)
-    private String status = "ABERTO";
+    private String status;
 
+    private String pagamentoIdAsaas;   // id da cobrança retornada
+   
+    private String invoiceUrl;  
+    
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedidoEntity> itens;
-
+ 
     // ========= GETTERS E SETTERS =========
 
     public Integer getIdPedido() {
@@ -86,5 +90,21 @@ public class PedidoEntity implements Serializable {
 
     public void setItens(List<ItemPedidoEntity> itens) {
         this.itens = itens;
+    }
+
+    public String getPagamentoIdAsaas() {
+        return pagamentoIdAsaas;
+    }
+
+    public void setPagamentoIdAsaas(String pagamentoIdAsaas) {
+        this.pagamentoIdAsaas = pagamentoIdAsaas;
+    }
+
+    public String getInvoiceUrl() {
+        return invoiceUrl;
+    }
+
+    public void setInvoiceUrl(String invoiceUrl) {
+        this.invoiceUrl = invoiceUrl;
     }
 }

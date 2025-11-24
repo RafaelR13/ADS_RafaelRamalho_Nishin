@@ -11,11 +11,19 @@ package com.upf.nishin.controller;
 
 import com.upf.nishin.entity.ProdutoEntity;
 import com.upf.nishin.facade.ProdutoFacade;
+import com.upf.nishin.service.R2Service;
+
+import org.primefaces.event.FileUploadEvent;
+import org.primefaces.model.file.UploadedFile;
+
 import jakarta.enterprise.context.SessionScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import jakarta.faces.application.FacesMessage;
 import jakarta.faces.context.FacesContext;
+
+import java.io.InputStream;
+import java.io.IOException;
 import java.io.Serializable;
 import java.util.List;
 
@@ -24,72 +32,138 @@ import java.util.List;
 public class ProdutoController implements Serializable {
 
     private ProdutoEntity produto = new ProdutoEntity();
-    private ProdutoEntity selected; // produto selecionado para edição ou detalhes
+    private ProdutoEntity selected;
+
+    private UploadedFile fileNovo;
+    private UploadedFile fileEdit;
 
     @Inject
     private ProdutoFacade produtoFacade;
 
-    /* ==================== GETTERS / SETTERS ==================== */
-    public ProdutoEntity getProduto() {
-        return produto;
-    }
+    @Inject
+    private R2Service r2Service;
 
-    public void setProduto(ProdutoEntity produto) {
-        this.produto = produto;
-    }
+    /* ============================================================
+       GETTERS / SETTERS
+       ============================================================ */
+    public ProdutoEntity getProduto() { return produto; }
+    public void setProduto(ProdutoEntity produto) { this.produto = produto; }
 
-    public ProdutoEntity getSelected() {
-        return selected;
-    }
+    public ProdutoEntity getSelected() { return selected; }
+    public void setSelected(ProdutoEntity selected) { this.selected = selected; }
 
-    public void setSelected(ProdutoEntity selected) {
-        this.selected = selected;
-    }
+    public UploadedFile getFileNovo() { return fileNovo; }
+    public void setFileNovo(UploadedFile fileNovo) { this.fileNovo = fileNovo; }
 
-    /* ==================== LISTAGEM ==================== */
+    public UploadedFile getFileEdit() { return fileEdit; }
+    public void setFileEdit(UploadedFile fileEdit) { this.fileEdit = fileEdit; }
+
+    /* ============================================================
+       LISTAGEM
+       ============================================================ */
     public List<ProdutoEntity> getProdutoList() {
         return produtoFacade.findAll();
     }
 
-    /* ==================== CRUD ==================== */
+    /* ============================================================
+       LISTENERS DE UPLOAD
+       ============================================================ */
+    public void uploadNovoListener(FileUploadEvent event) {
+        this.fileNovo = event.getFile();
+        adicionarMensagem(FacesMessage.SEVERITY_INFO,
+                "Imagem enviada", event.getFile().getFileName());
+    }
+
+    public void uploadEditListener(FileUploadEvent event) {
+        this.fileEdit = event.getFile();
+        adicionarMensagem(FacesMessage.SEVERITY_INFO,
+                "Imagem enviada", event.getFile().getFileName());
+    }
+
+    /* ============================================================
+       CRUD
+       ============================================================ */
     public void adicionarProduto() {
         try {
+            if (fileNovo != null && !fileNovo.getFileName().isEmpty()) {
+                String url = uploadToR2(fileNovo);
+                produto.setImagem(url);
+            }
+
             produtoFacade.create(produto);
-            adicionarMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Produto cadastrado com sucesso!");
-            produto = new ProdutoEntity(); // limpa o formulário
+
+            adicionarMensagem(FacesMessage.SEVERITY_INFO,
+                    "Sucesso", "Produto cadastrado com sucesso!");
+
+            produto = new ProdutoEntity();
+            fileNovo = null;
+
         } catch (Exception e) {
-            adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Não foi possível adicionar o produto.");
+            e.printStackTrace();
+            adicionarMensagem(FacesMessage.SEVERITY_ERROR,
+                    "Erro", "Não foi possível cadastrar o produto.");
         }
     }
 
     public void editarProduto() {
-        if (selected != null) {
-            try {
-                produtoFacade.edit(selected);
-                adicionarMensagem(FacesMessage.SEVERITY_INFO, "Sucesso", "Produto atualizado com sucesso!");
-                selected = null;
-            } catch (Exception e) {
-                adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Falha ao atualizar o produto.");
+        try {
+            if (selected == null) return;
+
+            if (fileEdit != null && !fileEdit.getFileName().isEmpty()) {
+                String url = uploadToR2(fileEdit);
+                selected.setImagem(url);
             }
+
+            produtoFacade.edit(selected);
+
+            adicionarMensagem(FacesMessage.SEVERITY_INFO,
+                    "Sucesso", "Produto atualizado com sucesso!");
+
+            fileEdit = null;
+            selected = null;
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            adicionarMensagem(FacesMessage.SEVERITY_ERROR,
+                    "Erro", "Não foi possível atualizar o produto.");
         }
     }
 
     public void deletarProduto() {
-        if (selected != null) {
-            try {
-                produtoFacade.remove(selected);
-                adicionarMensagem(FacesMessage.SEVERITY_INFO, "Removido", "Produto excluído com sucesso!");
-                selected = null;
-            } catch (Exception e) {
-                adicionarMensagem(FacesMessage.SEVERITY_ERROR, "Erro", "Erro ao excluir o produto.");
-            }
+        try {
+            if (selected == null) return;
+
+            produtoFacade.remove(selected);
+
+            adicionarMensagem(FacesMessage.SEVERITY_INFO,
+                    "Sucesso", "Produto excluído com sucesso!");
+
+            selected = null;
+
+        } catch (Exception e) {
+            adicionarMensagem(FacesMessage.SEVERITY_ERROR,
+                    "Erro", "Falha ao excluir o produto.");
         }
     }
 
-    /* ==================== DETALHES DO PRODUTO ==================== */
-    /**
-     * Define o produto clicado e redireciona para a página de detalhes.
-     */
+    /* ============================================================
+       UPLOAD PARA R2
+       ============================================================ */
+    private String uploadToR2(UploadedFile file) throws IOException {
+
+        String fileName = System.currentTimeMillis() + "_" + file.getFileName();
+        byte[] bytes;
+
+        try (InputStream is = file.getInputStream()) {
+            bytes = is.readAllBytes();
+        }
+
+        return r2Service.upload(fileName, bytes, file.getContentType());
+    }
+
+    /* ============================================================
+       DETALHES
+       ============================================================ */
     public String visualizarProduto(ProdutoEntity produtoSelecionado) {
         this.selected = produtoSelecionado;
         return "produtoDetalhe.xhtml?faces-redirect=true";
@@ -109,8 +183,11 @@ public class ProdutoController implements Serializable {
         this.selected = null;
     }
 
-    /* ==================== UTILITÁRIOS ==================== */
+    /* ============================================================
+       MENSAGENS
+       ============================================================ */
     private void adicionarMensagem(FacesMessage.Severity severity, String titulo, String detalhe) {
-        FacesContext.getCurrentInstance().addMessage(null, new FacesMessage(severity, titulo, detalhe));
+        FacesContext.getCurrentInstance()
+                .addMessage(null, new FacesMessage(severity, titulo, detalhe));
     }
 }

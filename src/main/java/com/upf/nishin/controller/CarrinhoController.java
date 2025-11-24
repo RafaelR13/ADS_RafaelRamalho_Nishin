@@ -216,4 +216,5 @@ public class CarrinhoController implements Serializable {
                 ? itens.stream().mapToInt(ItemCarrinhoEntity::getQuantidade).sum()
                 : 0;
     }
+    
 }

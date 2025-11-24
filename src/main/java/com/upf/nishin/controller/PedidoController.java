@@ -11,7 +11,8 @@ package com.upf.nishin.controller;
 
 import com.upf.nishin.entity.*;
 import com.upf.nishin.facade.*;
-import jakarta.enterprise.context.SessionScoped;
+import jakarta.annotation.PostConstruct;
+import jakarta.faces.view.ViewScoped;
 import jakarta.inject.Inject;
 import jakarta.inject.Named;
 import java.io.Serializable;
@@ -19,71 +20,35 @@ import java.util.ArrayList;
 import java.util.List;
 
 @Named("pedidoController")
-@SessionScoped
+@ViewScoped
 public class PedidoController implements Serializable {
 
     @Inject
     private PedidoFacade pedidoFacade;
 
     @Inject
-    private ItemPedidoFacade itemPedidoFacade;
+    private UsuarioController usuarioController;
 
-    @Inject
-    private CarrinhoController carrinhoController; // vamos aproveitar o carrinho atual
+    private List<PedidoEntity> pedidosDoUsuario;
 
-    private PedidoEntity pedidoAtual;
-
-    private List<PedidoEntity> pedidosUsuario = new ArrayList<>();
-
-    // ========= GETTERS =========
-    public PedidoEntity getPedidoAtual() {
-        return pedidoAtual;
+    @PostConstruct
+    public void init() {
+        carregarPedidosDoUsuario();
     }
 
-    public List<PedidoEntity> getPedidosUsuario() {
-        return pedidosUsuario;
+    public void carregarPedidosDoUsuario() {
+
+        UsuarioEntity u = usuarioController.getUsuarioLogado();
+
+        if (u != null) {
+            pedidosDoUsuario = pedidoFacade.listarPedidosPorUsuario(u);
+        } else {
+            pedidosDoUsuario = new ArrayList<>();
+        }
     }
 
-    // ========= CRIAR PEDIDO =========
-    public void criarPedido(UsuarioEntity usuario) {
-        if (carrinhoController.getItens().isEmpty()) {
-            return; // Carrinho vazio
-        }
-
-        pedidoAtual = new PedidoEntity();
-        pedidoAtual.setUsuario(usuario);
-        pedidoAtual.setStatus("PENDENTE");
-
-        double total = 0.0;
-        List<ItemPedidoEntity> itensPedido = new ArrayList<>();
-
-        for (ItemCarrinhoEntity itemCarrinho : carrinhoController.getItens()) {
-            ItemPedidoEntity itemPedido = new ItemPedidoEntity();
-            itemPedido.setPedido(pedidoAtual);
-            itemPedido.setProduto(itemCarrinho.getProduto());
-            itemPedido.setQuantidade(itemCarrinho.getQuantidade());
-            itemPedido.setPrecoUnitario(itemCarrinho.getProduto().getPreco());
-
-            total += itemPedido.getSubtotal();
-            itensPedido.add(itemPedido);
-        }
-
-        pedidoAtual.setValorTotal(total);
-        pedidoAtual.setItens(itensPedido);
-
-        pedidoFacade.create(pedidoAtual);
-        for (ItemPedidoEntity i : itensPedido) {
-            itemPedidoFacade.create(i);
-        }
-
-        carrinhoController.limparCarrinho();
-    }
-
-    // ========= LISTAR PEDIDOS =========
-    public List<PedidoEntity> listarPedidosUsuario(UsuarioEntity usuario) {
-        return pedidoFacade.getEntityManager()
-                .createQuery("SELECT p FROM PedidoEntity p WHERE p.usuario = :u ORDER BY p.dataPedido DESC", PedidoEntity.class)
-                .setParameter("u", usuario)
-                .getResultList();
+    public List<PedidoEntity> getListaPedidosDoUsuario() {
+        return pedidosDoUsuario;
     }
 }
+

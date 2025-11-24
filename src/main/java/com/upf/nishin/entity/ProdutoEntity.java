@@ -34,7 +34,7 @@ public class ProdutoEntity implements Serializable {
     private Integer estoque;
 
     @Column(name = "imagem_url")
-    private String imagem; // Caminho ou URL da imagem
+    private String imagem;
 
      public Integer getIdProduto() {
         return idProduto;
