@@ -21,6 +21,9 @@ import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import com.upf.nishin.dto.DadosPagamentoDTO;
+import com.upf.nishin.facade.PedidoFacade;
+import com.upf.nishin.facade.ItemPedidoFacade;
 
 @Named("carrinhoController")
 @SessionScoped
@@ -38,12 +41,29 @@ public class CarrinhoController implements Serializable {
     @Inject
     private UsuarioFacade usuarioFacade;
 
+    @Inject
+    private PedidoFacade pedidoFacade;
+
+    @Inject
+    private ItemPedidoFacade itemPedidoFacade;
+
     public CarrinhoEntity getCarrinho() {
         return carrinho;
     }
 
     public List<ItemCarrinhoEntity> getItens() {
         return itens;
+    }
+
+    private DadosPagamentoDTO dadosPagamento = new DadosPagamentoDTO();
+    private boolean dialogPagamentoAberto = false;
+
+    public DadosPagamentoDTO getDadosPagamento() {
+        return dadosPagamento;
+    }
+
+    public boolean isDialogPagamentoAberto() {
+        return dialogPagamentoAberto;
     }
 
     /**
@@ -199,13 +219,22 @@ public class CarrinhoController implements Serializable {
         itens.clear();
     }
 
-    /**
-     * Simula uma finalização de compra *
-     */
-    public void finalizarCompra() {
-        limparCarrinho();
-        FacesContext.getCurrentInstance().addMessage(null,
-                new FacesMessage(FacesMessage.SEVERITY_INFO, "Compra finalizada!", "Seu pedido foi criado com sucesso!"));
+    public void abrirDialogPagamento() {
+
+        UsuarioEntity usuario = getUsuarioSessao();
+        if (usuario == null) {
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_WARN,
+                            "Você precisa estar logado!", null));
+            return;
+        }
+
+        garantirCarrinhoUsuario();
+
+        dadosPagamento = new DadosPagamentoDTO();
+        dadosPagamento.setValorTotal(getValorTotal());
+
+        dialogPagamentoAberto = true;
     }
 
     /**
@@ -216,5 +245,58 @@ public class CarrinhoController implements Serializable {
                 ? itens.stream().mapToInt(ItemCarrinhoEntity::getQuantidade).sum()
                 : 0;
     }
-    
+
+    public void confirmarPagamento() {
+        try {
+            UsuarioEntity usuario = getUsuarioSessao();
+
+            if (usuario == null) {
+                FacesContext.getCurrentInstance().addMessage(null,
+                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                                "Erro", "Usuário não está logado."));
+                return;
+            }
+
+            garantirCarrinhoUsuario();
+
+            // 🔥 Criar o novo pedido
+            PedidoEntity pedido = new PedidoEntity();
+            pedido.setUsuario(usuario);
+            pedido.setDataPedido(new Date());
+            pedido.setStatus("PENDENTE");
+            pedido.setValorTotal(getValorTotal());
+
+            pedidoFacade.create(pedido);
+
+            // 🔥 Salvar cada item do carrinho dentro do pedido
+            for (ItemCarrinhoEntity item : itens) {
+
+                ItemPedidoEntity ip = new ItemPedidoEntity();
+
+                ip.setPedido(pedido);
+                ip.setProduto(item.getProduto());
+                ip.setQuantidade(item.getQuantidade());
+                ip.setPrecoUnitario(item.getProduto().getPreco());
+
+                itemPedidoFacade.create(ip);
+            }
+
+            // 🔥 Limpar o carrinho
+            limparCarrinho();
+
+            dialogPagamentoAberto = false;
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_INFO,
+                            "Compra finalizada!",
+                            "Seu pedido foi registrado com sucesso."));
+
+        } catch (Exception e) {
+            e.printStackTrace();
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
+                            "Erro ao processar pagamento.", null));
+        }
+    }
+
 }
