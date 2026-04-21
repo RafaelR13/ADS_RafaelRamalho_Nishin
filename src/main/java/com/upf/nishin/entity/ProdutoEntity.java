@@ -36,7 +36,7 @@ public class ProdutoEntity implements Serializable {
     @Column(name = "imagem_url")
     private String imagem;
 
-     public Integer getIdProduto() {
+    public Integer getIdProduto() {
         return idProduto;
     }
 

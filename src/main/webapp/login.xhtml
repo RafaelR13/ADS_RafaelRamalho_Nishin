@@ -6,7 +6,8 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
 <!DOCTYPE html>
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:p="http://primefaces.org/ui">
+      xmlns:p="http://primefaces.org/ui"
+      xmlns:f="jakarta.faces.core">
 
     <h:head>
         <title>Login - Nishin Store</title>
@@ -28,7 +29,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Html.html to edit thi
                                  placeholder="E-mail"
                                  required="true"
                                  requiredMessage="E-mail é obrigatório."
-                                 styleClass="ui-inputtext"/>
+                                 validatorMessage="Digite um e-mail válido."
+                                 styleClass="ui-inputtext">
+                     <f:validateRegex pattern="^[^@\s]+@[^@\s]+\.[^@\s]+$"/>
+                     </p:inputText>
                 </div>
 
                 <div class="input-field">

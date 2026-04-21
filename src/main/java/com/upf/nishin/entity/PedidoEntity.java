@@ -8,7 +8,6 @@ package com.upf.nishin.entity;
  *
  * @author User
  */
-
 import jakarta.persistence.*;
 import java.io.Serializable;
 import java.util.Date;
@@ -23,7 +22,7 @@ public class PedidoEntity implements Serializable {
     private Integer idPedido;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_usuario", referencedColumnName = "id")
+    @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private UsuarioEntity usuario;
 
     @Temporal(TemporalType.TIMESTAMP)
@@ -36,14 +35,13 @@ public class PedidoEntity implements Serializable {
     private String status;
 
     private String pagamentoIdAsaas;   // id da cobrança retornada
-   
-    private String invoiceUrl;  
-    
+
+    private String invoiceUrl;
+
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedidoEntity> itens;
- 
-    // ========= GETTERS E SETTERS =========
 
+    // ========= GETTERS E SETTERS =========
     public Integer getIdPedido() {
         return idPedido;
     }
