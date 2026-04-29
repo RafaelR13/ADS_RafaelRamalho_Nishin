@@ -27,8 +27,11 @@ public class ItemPedidoEntity implements Serializable {
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_produto", referencedColumnName = "id")
     private ProdutoEntity produto;
-
+    
+    @Column (nullable = false)
     private Integer quantidade;
+    
+    @Column (nullable = false, name = "preco_unitario")
     private Double precoUnitario;
 
     // ========= GETTERS E SETTERS =========

@@ -30,11 +30,11 @@ public class ProdutoEntity implements Serializable {
     @Column(nullable = false)
     private Double preco;
 
-    @Column(name = "quantidade_estoque")
-    private Integer estoque;
-
     @Column(name = "imagem_url")
     private String imagem;
+    
+    @Column(length = 20)
+    private String status;
 
     public Integer getIdProduto() {
         return idProduto;
@@ -65,17 +65,18 @@ public class ProdutoEntity implements Serializable {
         this.preco = preco;
     }
 
-    public Integer getEstoque() {
-        return estoque;
-    }
-    public void setEstoque(Integer estoque) {
-        this.estoque = estoque;
-    }
-
     public String getImagem() {
         return imagem;
     }
     public void setImagem(String imagem) {
         this.imagem = imagem;
+    }
+
+    public String getStatus() {
+        return status;
+    }
+
+    public void setStatus(String status) {
+        this.status = status;
     }
 }

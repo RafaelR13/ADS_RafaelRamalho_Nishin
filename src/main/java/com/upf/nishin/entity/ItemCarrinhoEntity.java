@@ -28,6 +28,7 @@ public class ItemCarrinhoEntity implements Serializable {
     @JoinColumn(name = "id_produto", referencedColumnName = "id_produto")
     private ProdutoEntity produto;
 
+    @Column (nullable = false)
     private Integer quantidade;
 
     // ========= GETTERS E SETTERS =========

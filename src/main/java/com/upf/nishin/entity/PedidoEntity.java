@@ -33,10 +33,11 @@ public class PedidoEntity implements Serializable {
 
     @Column(length = 20)
     private String status;
+    
+    @Column (name = "codigo_rastreio", length = 50)
+    private String codigoRatreio;
 
-    private String pagamentoIdAsaas;   // id da cobrança retornada
-
-    private String invoiceUrl;
+    // id da cobrança retornada agora está na tabela pagamento
 
     @OneToMany(mappedBy = "pedido", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<ItemPedidoEntity> itens;
@@ -90,19 +91,11 @@ public class PedidoEntity implements Serializable {
         this.itens = itens;
     }
 
-    public String getPagamentoIdAsaas() {
-        return pagamentoIdAsaas;
+    public String getCodigoRatreio() {
+        return codigoRatreio;
     }
 
-    public void setPagamentoIdAsaas(String pagamentoIdAsaas) {
-        this.pagamentoIdAsaas = pagamentoIdAsaas;
-    }
-
-    public String getInvoiceUrl() {
-        return invoiceUrl;
-    }
-
-    public void setInvoiceUrl(String invoiceUrl) {
-        this.invoiceUrl = invoiceUrl;
+    public void setCodigoRatreio(String codigoRatreio) {
+        this.codigoRatreio = codigoRatreio;
     }
 }
