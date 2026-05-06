@@ -73,10 +73,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     <h:outputText value="#{p.descricao}" />
                 </p:column>
 
-                <p:column headerText="Estoque">
-                    <h:outputText value="#{p.estoque}" />
-                </p:column>
-
                 <p:column headerText="Imagem">
                     <p:graphicImage value="#{p.imagem}" width="60" height="60" rendered="#{not empty p.imagem}" />
                 </p:column>
@@ -121,9 +117,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     <p:outputLabel value="Descrição:" for="descricao" />
                     <p:inputTextarea id="descricao" value="#{produtoController.produto.descricao}" rows="3" />
 
-                    <p:outputLabel value="Estoque:" for="estoque" />
-                    <p:inputText id="estoque" value="#{produtoController.produto.estoque}" />
-
                     <p:outputLabel value="Imagem:" for="uploadNovo" />
                     <p:fileUpload id="uploadNovo"
                                   mode="advanced"
@@ -165,9 +158,6 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
 
                     <p:outputLabel value="Descrição:" for="descricaoEdit" />
                     <p:inputTextarea id="descricaoEdit" value="#{produtoController.selected.descricao}" rows="3" />
-
-                    <p:outputLabel value="Estoque:" for="estoqueEdit" />
-                    <p:inputText id="estoqueEdit" value="#{produtoController.selected.estoque}" />
 
                     <p:outputLabel value="Nova Imagem:" for="uploadEdit" />
                     <p:fileUpload id="uploadEdit"

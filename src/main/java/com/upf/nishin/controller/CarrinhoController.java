@@ -24,6 +24,7 @@ import java.util.List;
 import com.upf.nishin.dto.DadosPagamentoDTO;
 import com.upf.nishin.facade.PedidoFacade;
 import com.upf.nishin.facade.ItemPedidoFacade;
+import com.upf.nishin.facade.EstoqueProdutoFacade;
 
 @Named("carrinhoController")
 @SessionScoped
@@ -47,6 +48,9 @@ public class CarrinhoController implements Serializable {
     @Inject
     private ItemPedidoFacade itemPedidoFacade;
 
+    @Inject
+    private EstoqueProdutoFacade estoqueProdutoFacade;
+
     public CarrinhoEntity getCarrinho() {
         return carrinho;
     }
@@ -55,6 +59,7 @@ public class CarrinhoController implements Serializable {
         return itens;
     }
 
+    private int quantidadeSelecionada = 1;
     private DadosPagamentoDTO dadosPagamento = new DadosPagamentoDTO();
     private boolean dialogPagamentoAberto = false;
 
@@ -64,6 +69,18 @@ public class CarrinhoController implements Serializable {
 
     public boolean isDialogPagamentoAberto() {
         return dialogPagamentoAberto;
+    }
+
+    public int getQuantidadeSelecionada() {
+        return quantidadeSelecionada;
+    }
+
+    public void setQuantidadeSelecionada(int quantidadeSelecionada) {
+        this.quantidadeSelecionada = quantidadeSelecionada;
+    }
+
+    public int getEstoqueDisponivel(ProdutoEntity produto) {
+        return estoqueProdutoFacade.buscarQuantidadeDisponivel(produto.getIdProduto());
     }
 
     /**
@@ -105,7 +122,7 @@ public class CarrinhoController implements Serializable {
     /**
      * Adiciona um produto ao carrinho (salvando no banco) *
      */
-    public String adicionarProduto(ProdutoEntity produto) {
+    public String adicionarProduto(ProdutoEntity produto, int quantidade) {
         FacesContext context = FacesContext.getCurrentInstance();
         UsuarioEntity usuario = getUsuarioSessao();
 
@@ -115,16 +132,51 @@ public class CarrinhoController implements Serializable {
 
         garantirCarrinhoUsuario();
 
+        int estoqueDisponivel = getEstoqueDisponivel(produto);
+
+        if (quantidade <= 0) {
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_WARN,
+                    "Quantidade inválida",
+                    "Selecione ao menos 1 unidade."
+            ));
+            return null;
+        }
+
+        if (quantidade > estoqueDisponivel) {
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Estoque insuficiente",
+                    "Quantidade máxima disponível: " + estoqueDisponivel
+            ));
+            return null;
+        }
+
         ItemCarrinhoEntity itemExistente = itemCarrinhoFacade.findByCarrinhoAndProduto(carrinho, produto);
 
+        int quantidadeFinal = quantidade;
+
         if (itemExistente != null) {
-            itemExistente.setQuantidade(itemExistente.getQuantidade() + 1);
+            quantidadeFinal += itemExistente.getQuantidade();
+        }
+
+        if (quantidadeFinal > estoqueDisponivel) {
+            context.addMessage(null, new FacesMessage(
+                    FacesMessage.SEVERITY_ERROR,
+                    "Limite excedido",
+                    "Você já possui itens no carrinho. Máximo permitido: " + estoqueDisponivel
+            ));
+            return null;
+        }
+
+        if (itemExistente != null) {
+            itemExistente.setQuantidade(quantidadeFinal);
             itemCarrinhoFacade.edit(itemExistente);
         } else {
             ItemCarrinhoEntity novoItem = new ItemCarrinhoEntity();
             novoItem.setCarrinho(carrinho);
             novoItem.setProduto(produto);
-            novoItem.setQuantidade(1);
+            novoItem.setQuantidade(quantidade);
             itemCarrinhoFacade.create(novoItem);
         }
 
@@ -134,10 +186,14 @@ public class CarrinhoController implements Serializable {
 
         // ✅ Usando Flash Scope para manter a mensagem após o redirect
         context.getExternalContext().getFlash().setKeepMessages(true);
-        context.addMessage(null, new FacesMessage(FacesMessage.SEVERITY_INFO,
-                "Sucesso", produto.getNome() + " foi adicionado ao seu carrinho!"));
+        context.addMessage(null, new FacesMessage(
+                FacesMessage.SEVERITY_INFO,
+                "Sucesso",
+                produto.getNome() + " foi adicionado ao carrinho!"
+        ));
 
-        // ✅ Retorna para o index.xhtml com redirect
+        quantidadeSelecionada = 1;
+
         return "/index.xhtml?faces-redirect=true";
     }
 
@@ -156,8 +212,8 @@ public class CarrinhoController implements Serializable {
         }
 
         try {
-            // Adiciona o produto ao carrinho
-            adicionarProduto(produto);
+            // Adiciona o produto ao carrinho com a quantidade selecionada
+            adicionarProduto(produto, quantidadeSelecionada);
 
             // ✅ Mensagem de sucesso
             context.addMessage(null, new FacesMessage(

@@ -25,8 +25,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                             style="width:300px; height:300px; object-fit:cover; border-radius:10px;"/>
 
             <h3 style="margin-top:15px;">
-                R$ <h:outputText value="#{produtoController.selected.preco}">
-                    <f:convertNumber type="currency" currencySymbol="" minFractionDigits="2" />
+                R$
+                <h:outputText value="#{produtoController.selected.preco}">
+                    <f:convertNumber type="currency"
+                                     currencySymbol=""
+                                     minFractionDigits="2"/>
                 </h:outputText>
             </h3>
 
@@ -34,11 +37,28 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                 #{produtoController.selected.descricao}
             </p>
 
+            <!-- ==== Estoque disponível ==== -->
+            <h4 style="margin-top:15px;">
+                Estoque disponível:
+                #{carrinhoController.getEstoqueDisponivel(produtoController.selected)}
+            </h4>
+
+            <!-- ==== Quantidade ==== -->
+            <p:outputLabel for="quantidade" value="Quantidade:" />
+
+            <p:inputNumber id="quantidade"
+                           value="#{carrinhoController.quantidadeSelecionada}"
+                           minValue="1"
+                           maxValue="#{carrinhoController.getEstoqueDisponivel(produtoController.selected)}"
+                           decimalPlaces="0"/>
+
+            <br/><br/>
+
             <!-- ==== Botão de Adicionar ao Carrinho ==== -->
             <p:commandButton value="Adicionar ao Carrinho"
                              icon="pi pi-cart-plus"
-                             action="#{carrinhoController.adicionarProduto(produtoController.selected)}"
-                             ajax="false"
+                             action="#{carrinhoController.adicionarProduto(produtoController.selected, carrinhoController.quantidadeSelecionada)}"
+                             update="growl"
                              styleClass="ui-button-danger"
                              style="margin-top:20px;"/>
 
@@ -52,8 +72,10 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                              styleClass="ui-button-secondary"
                              style="margin-top:10px;"/>
 
-            <!-- Growl para mensagens -->
-            <p:growl id="growl" showDetail="true" life="4000"/>
+            <!-- ==== Growl ==== -->
+            <p:growl id="growl"
+                     showDetail="true"
+                     life="4000"/>
 
         </h:form>
 
