@@ -10,6 +10,7 @@ import software.amazon.awssdk.services.s3.model.PutObjectRequest;
 
 import java.io.InputStream;
 import java.net.URI;
+import software.amazon.awssdk.services.s3.S3Configuration;
 
 @ApplicationScoped
 public class R2Service {
@@ -26,24 +27,32 @@ public class R2Service {
         AwsBasicCredentials creds = AwsBasicCredentials.create(accessKey, secretKey);
 
         this.r2 = S3Client.builder()
-                .region(Region.US_EAST_1) // Região do R2 é sempre essa
+                .region(Region.of("auto"))
                 .credentialsProvider(StaticCredentialsProvider.create(creds))
                 .endpointOverride(URI.create("https://" + accountId + ".r2.cloudflarestorage.com"))
-                .forcePathStyle(true) // 🔥 ESSENCIAL para o R2 funcionar corretamente
+                .serviceConfiguration(
+                        S3Configuration.builder()
+                                .pathStyleAccessEnabled(true)
+                                .build()
+                )
                 .build();
     }
 
-    /** ============================================================
-     *  UPLOAD PRINCIPAL (usado pelo controller)
-     * ============================================================ */
+    /**
+     * ============================================================ UPLOAD
+     * PRINCIPAL (usado pelo controller)
+     * ============================================================
+     */
     public String uploadFile(InputStream input, String fileName) throws Exception {
         byte[] bytes = input.readAllBytes();
         return upload(fileName, bytes, "image/*");
     }
 
-    /** ============================================================
-     *  MÉTODO DE UPLOAD INTERNO
-     * ============================================================ */
+    /**
+     * ============================================================ MÉTODO DE
+     * UPLOAD INTERNO
+     * ============================================================
+     */
     public String upload(String fileName, byte[] bytes, String contentType) {
 
         PutObjectRequest req = PutObjectRequest.builder()

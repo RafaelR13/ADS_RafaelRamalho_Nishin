@@ -15,7 +15,7 @@ import java.util.Date;
 
 
 @Entity
-@Table(name = "estoqueproduto")
+@Table(name = "estoque_produto")
 public class EstoqueProdutoEntity implements Serializable {
 
     @Id
@@ -31,7 +31,7 @@ public class EstoqueProdutoEntity implements Serializable {
     private Integer quantidade;
 
     @Temporal(TemporalType.TIMESTAMP)
-    @Column(name = "data")
+    @Column(name =  "data_movimentacao")
     private Date data;
 
     @Column(name = "tipo_movimentacao")
