@@ -256,6 +256,39 @@ public class CarrinhoController implements Serializable {
         }
     }
 
+    public void atualizarQuantidade(ItemCarrinhoEntity item) {
+
+        if (item == null || item.getProduto() == null) {
+            return;
+        }
+
+        int estoqueDisponivel = getEstoqueDisponivel(item.getProduto());
+
+        // Quantidade mínima
+        if (item.getQuantidade() < 1) {
+            item.setQuantidade(1);
+        }
+
+        // Limite do estoque
+        if (item.getQuantidade() > estoqueDisponivel) {
+
+            item.setQuantidade(estoqueDisponivel);
+
+            FacesContext.getCurrentInstance().addMessage(null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_WARN,
+                            "Estoque insuficiente",
+                            "Máximo disponível: " + estoqueDisponivel
+                    ));
+        }
+
+        // Salva no banco
+        itemCarrinhoFacade.edit(item);
+
+        // Atualiza lista
+        itens = itemCarrinhoFacade.findByCarrinho(carrinho);
+    }
+
     /**
      * Calcula o valor total *
      */

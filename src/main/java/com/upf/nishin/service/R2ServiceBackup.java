@@ -7,14 +7,13 @@ import software.amazon.awssdk.core.sync.RequestBody;
 import software.amazon.awssdk.regions.Region;
 import software.amazon.awssdk.services.s3.S3Client;
 import software.amazon.awssdk.services.s3.model.PutObjectRequest;
-import software.amazon.awssdk.http.apache.ApacheHttpClient;
 
 import java.io.InputStream;
 import java.net.URI;
 import software.amazon.awssdk.services.s3.S3Configuration;
 
 @ApplicationScoped
-public class R2Service {
+public class R2ServiceBackup {
 
     private final S3Client r2;
 
@@ -23,7 +22,7 @@ public class R2Service {
     private final String accessKey = "3d092badb9f367ea19e57602d7cfff29";
     private final String secretKey = "55ac49e0b43970cd38e4e6cc023c1d47b092dab2906f785a51ed835084b24c94";
 
-    public R2Service() {
+    public R2ServiceBackup() {
 
         AwsBasicCredentials creds = AwsBasicCredentials.create(accessKey, secretKey);
 
@@ -31,7 +30,6 @@ public class R2Service {
                 .region(Region.of("auto"))
                 .credentialsProvider(StaticCredentialsProvider.create(creds))
                 .endpointOverride(URI.create("https://" + accountId + ".r2.cloudflarestorage.com"))
-                .httpClientBuilder(ApacheHttpClient.builder())
                 .serviceConfiguration(
                         S3Configuration.builder()
                                 .pathStyleAccessEnabled(true)

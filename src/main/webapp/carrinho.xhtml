@@ -141,7 +141,19 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                     </p:column>
 
                     <p:column headerText="Quantidade">
-                        <h:outputText value="#{item.quantidade}" />
+
+                        <p:inputNumber value="#{item.quantidade}"
+                                       minValue="1"
+                                       maxValue="#{carrinhoController.getEstoqueDisponivel(item.produto)}"
+                                       decimalPlaces="0"
+                                       style="width:70px">
+
+                            <p:ajax event="blur"
+                                    listener="#{carrinhoController.atualizarQuantidade(item)}"
+                                    update="frmCarrinho frmCarrinho:growl"/>
+
+                        </p:inputNumber>
+
                     </p:column>
 
                     <p:column headerText="Subtotal">
