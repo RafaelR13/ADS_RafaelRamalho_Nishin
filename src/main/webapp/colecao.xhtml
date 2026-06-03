@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="jakarta.faces.html"
+      xmlns:f="jakarta.faces.core"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Teste Coleção</title>
+</h:head>
+
+<h:body>
+
+    <h:form id="formColecao">
+
+        <p:growl id="msgs" showDetail="true"/>
+
+        <p:panel header="Cadastro de Coleção">
+
+            <p:inputText
+                value="#{colecaoController.colecao.nome}"
+                placeholder="Nome da coleção"
+                required="true"/>
+
+            <br/><br/>
+
+            <p:inputTextarea
+                value="#{colecaoController.colecao.descricao}"
+                placeholder="Descrição"
+                rows="4"
+                cols="50"/>
+
+            <br/><br/>
+
+            <p:inputText
+                value="#{colecaoController.colecao.temaConfig}"
+                placeholder="Tema (naruto, frieren, onepiece...)"/>
+
+            <br/><br/>
+
+            <p:commandButton
+                value="Salvar"
+                action="#{colecaoController.salvarColecao}"
+                update="@form"/>
+
+        </p:panel>
+
+        <br/>
+
+        <p:panel header="Coleções">
+
+            <p:dataTable
+                value="#{colecaoController.colecoes}"
+                var="c">
+
+                <p:column headerText="ID">
+                    #{c.idColecao}
+                </p:column>
+
+                <p:column headerText="Nome">
+                    #{c.nome}
+                </p:column>
+
+                <p:column headerText="Descrição">
+                    #{c.descricao}
+                </p:column>
+
+                <p:column headerText="Tema">
+                    #{c.temaConfig}
+                </p:column>
+
+                <p:column headerText="Ações">
+
+                    <p:commandButton
+                        value="Editar"
+                        action="#{colecaoController.editarColecao(c)}"
+                        update="@form"/>
+
+                    <p:spacer width="5"/>
+
+                    <p:commandButton
+                        value="Excluir"
+                        action="#{colecaoController.excluirColecao(c)}"
+                        update="@form"
+                        styleClass="ui-button-danger"/>
+
+                    <p:spacer width="5"/>
+
+                    <p:commandButton
+                        value="Aplicar Tema"
+                        action="#{colecaoController.aplicarTema(c)}"
+                        update="msgs"/>
+
+                </p:column>
+
+            </p:dataTable>
+
+        </p:panel>
+
+    </h:form>
+
+</h:body>
+</html>
