@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit this template
+-->
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:h="http://java.sun.com/jsf/html"
+      xmlns:p="http://primefaces.org/ui">
+
+<h:head>
+    <title>Configurações do Usuário</title>
+
+    <h:outputStylesheet library="css" name="base.css"/>
+    <h:outputStylesheet library="css" name="index.css"/>
+</h:head>
+
+<h:body>
+
+    <h:form>
+
+        <!-- HEADER -->
+        <header>
+            <div class="logo">
+                <h:outputLink value="index.xhtml">
+                    <p:graphicImage library="images"
+                                    name="nishin-logo.png"
+                                    alt="Logo"
+                                    style="height:60px;"/>
+                </h:outputLink>
+            </div>
+
+            <h2>Nishin Store</h2>
+
+            <div class="actions">
+
+                <p:commandButton value="Voltar"
+                                 icon="pi pi-home"
+                                 action="index.xhtml?faces-redirect=true"/>
+
+            </div>
+        </header>
+
+        <!-- CONTEÚDO -->
+        <div style="
+             max-width:700px;
+             margin:50px auto;
+             text-align:center;">
+
+            <h1>Configurações do Usuário</h1>
+
+            <p style="margin-bottom:30px;">
+                Escolha uma das opções abaixo.
+            </p>
+
+            <p:panel style="margin-bottom:20px;">
+
+                <h3>Histórico de Pedidos</h3>
+
+                <p>
+                    Visualize todos os pedidos realizados na loja.
+                </p>
+
+                <p:commandButton value="Ver Histórico"
+                                 icon="pi pi-shopping-bag"
+                                 action="historicoPedidos.xhtml?faces-redirect=true"/>
+            </p:panel>
+
+            <p:panel>
+
+                <h3>Minhas Coleções</h3>
+
+                <p>
+                    Gerencie suas coleções de produtos.
+                </p>
+
+                <p:commandButton value="Abrir Coleções"
+                                 icon="pi pi-bookmark"
+                                 action="colecao.xhtml?faces-redirect=true"/>
+            </p:panel>
+
+        </div>
+
+        <!-- FOOTER -->
+        <footer>
+            <p>© 2025 Nishin Store</p>
+        </footer>
+
+    </h:form>
+
+</h:body>
+</html>
