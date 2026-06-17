@@ -74,7 +74,11 @@ Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/XHtml.xhtml to edit t
                 </p:column>
 
                 <p:column headerText="Imagem">
-                    <p:graphicImage value="#{p.imagem}" width="60" height="60" rendered="#{not empty p.imagem}" />
+                    <p:graphicImage
+                        value="#{request.contextPath}#{p.imagem}"
+                        width="60"
+                        height="60"
+                        rendered="#{not empty p.imagem}" />
                 </p:column>
 
             </p:dataTable>
