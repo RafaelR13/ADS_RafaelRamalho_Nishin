@@ -25,6 +25,9 @@ import com.upf.nishin.dto.DadosPagamentoDTO;
 import com.upf.nishin.facade.PedidoFacade;
 import com.upf.nishin.facade.ItemPedidoFacade;
 import com.upf.nishin.facade.EstoqueProdutoFacade;
+import com.upf.nishin.service.AsaasService;
+import jakarta.json.Json;
+import jakarta.json.JsonObject;
 
 @Named("carrinhoController")
 @SessionScoped
@@ -50,6 +53,9 @@ public class CarrinhoController implements Serializable {
 
     @Inject
     private EstoqueProdutoFacade estoqueProdutoFacade;
+
+    @Inject
+    private AsaasService asaasService;
 
     public CarrinhoEntity getCarrinho() {
         return carrinho;
@@ -336,20 +342,29 @@ public class CarrinhoController implements Serializable {
     }
 
     public void confirmarPagamento() {
+
         try {
+
             UsuarioEntity usuario = getUsuarioSessao();
 
             if (usuario == null) {
-                FacesContext.getCurrentInstance().addMessage(null,
-                        new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                                "Erro", "Usuário não está logado."));
+
+                FacesContext.getCurrentInstance().addMessage(
+                        null,
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_ERROR,
+                                "Erro",
+                                "Usuário não está logado."
+                        ));
+
                 return;
             }
 
             garantirCarrinhoUsuario();
 
-            // 🔥 Criar o novo pedido
+            // Cria pedido
             PedidoEntity pedido = new PedidoEntity();
+
             pedido.setUsuario(usuario);
             pedido.setDataPedido(new Date());
             pedido.setStatus("PENDENTE");
@@ -357,7 +372,24 @@ public class CarrinhoController implements Serializable {
 
             pedidoFacade.create(pedido);
 
-            // 🔥 Salvar cada item do carrinho dentro do pedido
+            // Cria cobrança na API
+            JsonObject resposta = asaasService.criarCobranca(pedido, usuario);
+
+            // Verifica erro
+            if (resposta.containsKey("error")) {
+
+                FacesContext.getCurrentInstance().addMessage(
+                        null,
+                        new FacesMessage(
+                                FacesMessage.SEVERITY_ERROR,
+                                "Erro ao criar cobrança",
+                                resposta.getString("error")
+                        ));
+
+                return;
+            }
+
+            // Salva itens do pedido
             for (ItemCarrinhoEntity item : itens) {
 
                 ItemPedidoEntity ip = new ItemPedidoEntity();
@@ -370,22 +402,33 @@ public class CarrinhoController implements Serializable {
                 itemPedidoFacade.create(ip);
             }
 
-            // 🔥 Limpar o carrinho
+            pedido.setStatus("AGUARDANDO_PAGAMENTO");
+
+            pedidoFacade.edit(pedido);
+
             limparCarrinho();
 
             dialogPagamentoAberto = false;
 
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_INFO,
-                            "Compra finalizada!",
-                            "Seu pedido foi registrado com sucesso."));
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_INFO,
+                            "Pedido criado",
+                            "Cobrança PIX criada com sucesso."
+                    ));
 
         } catch (Exception e) {
+
             e.printStackTrace();
-            FacesContext.getCurrentInstance().addMessage(null,
-                    new FacesMessage(FacesMessage.SEVERITY_ERROR,
-                            "Erro ao processar pagamento.", null));
+
+            FacesContext.getCurrentInstance().addMessage(
+                    null,
+                    new FacesMessage(
+                            FacesMessage.SEVERITY_ERROR,
+                            "Erro",
+                            "Não foi possível finalizar a compra."
+                    ));
         }
     }
-
 }

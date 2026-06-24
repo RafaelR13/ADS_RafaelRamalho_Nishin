@@ -21,11 +21,11 @@ public class ItemPedidoEntity implements Serializable {
     private Integer idItemPedido;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_pedido", referencedColumnName = "idPedido")
+    @JoinColumn(name = "id_pedido", referencedColumnName = "id_pedido")
     private PedidoEntity pedido;
 
     @ManyToOne(optional = false)
-    @JoinColumn(name = "id_produto", referencedColumnName = "id")
+    @JoinColumn(name = "id_produto", referencedColumnName = "id_produto")
     private ProdutoEntity produto;
     
     @Column (nullable = false)

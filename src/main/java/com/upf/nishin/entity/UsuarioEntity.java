@@ -40,9 +40,12 @@ public class UsuarioEntity implements Serializable {
 
     @Column(name = "data_cadastro")
     private LocalDateTime dataCadastro;
-    
+
     @Column(name = "admin", nullable = false)
     private boolean admin = false;
+
+    @Column(name = "cpf", length = 14, unique = true)
+    private String cpf;
 
     public Integer getIdUsuario() {
         return idUsuario;
@@ -99,13 +102,21 @@ public class UsuarioEntity implements Serializable {
     public void setDataCadastro(LocalDateTime dataCadastro) {
         this.dataCadastro = dataCadastro;
     }
-    
-     public boolean isAdmin() {
+
+    public boolean isAdmin() {
         return admin;
     }
 
     public void setAdmin(boolean admin) {
         this.admin = admin;
+    }
+    
+      public String getCpf() {
+        return cpf;
+    }
+
+    public void setCpf(String cpf) {
+        this.cpf = cpf;
     }
 
     @Override

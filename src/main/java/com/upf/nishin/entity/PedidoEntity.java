@@ -19,16 +19,18 @@ public class PedidoEntity implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @Column (name = "id_pedido")
     private Integer idPedido;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "id_usuario", referencedColumnName = "id_usuario")
     private UsuarioEntity usuario;
 
+    @Column (name = "data_pedido")
     @Temporal(TemporalType.TIMESTAMP)
     private Date dataPedido = new Date();
 
-    @Column(nullable = false)
+    @Column(name = "valor_total", nullable = false)
     private Double valorTotal;
 
     @Column(length = 20)
